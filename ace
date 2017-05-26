@@ -1,23 +1,27 @@
 #!/usr/bin/env php
 <?php
 
+use React\ChildProcess\Process;
+use React\EventLoop\Factory as EventFactory;
+use Symfony\Component\Yaml\Yaml;
+
 require 'vendor/autoload.php';
 
 $start_time = microtime(true);
 
-$config = Symfony\Component\Yaml\Yaml::parse(file_get_contents('config.yml'));
+$config = Yaml::parse(file_get_contents('config.yml'));
 
 if (null === $config) {
     exit('Config file does not exists');
 }
 
 foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
-    $loop = React\EventLoop\Factory::create();
+    $loop = EventFactory::create();
     echo PHP_EOL . 'Starting chunk ' . $chunkName . PHP_EOL;
     echo '----------------------------------------------' . PHP_EOL;
 
     foreach($commandChunk as $command) {
-        $process = new React\ChildProcess\Process($command);
+        $process = new Process($command);
         $process->start($loop);
 
         echo "\tStarting " . $command . '...' . ' PID: ' . $process->getPid() . PHP_EOL;
