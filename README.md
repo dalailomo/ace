@@ -1,6 +1,8 @@
 # ACE
 Async Command Executer using ReactPHP because... yes
 
+![acegif](http://i.imgur.com/ocTk6bW.gif)
+
 ## How the **** I use this
 
 ### Configuration
