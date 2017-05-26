@@ -1,6 +1,7 @@
 {
     "require": {
         "react/child-process": "^0.4.3",
-        "symfony/yaml": "^3.2"
+        "symfony/yaml": "^3.2",
+        "symfony/console": "^3.2"
     }
 }
