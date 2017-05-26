@@ -11,15 +11,20 @@ if (null === $config) {
     exit('Config file does not exists');
 }
 
-foreach($config['ace']['command-chunks'] as $commandChunk) {
+foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
     $loop = React\EventLoop\Factory::create();
+    echo PHP_EOL . 'Starting chunk ' . $chunkName . PHP_EOL;
+    echo '----------------------------------------------' . PHP_EOL;
 
     foreach($commandChunk as $command) {
         $process = new React\ChildProcess\Process($command);
+
+        echo "\tStarting " . $command . '...' . PHP_EOL;
+
         $process->start($loop);
 
         $process->on('exit', function() use($command) {
-            echo $command . ' finished!' . PHP_EOL;
+            echo "\t" . $command . ' finished!' . PHP_EOL;
         });
     }
 
