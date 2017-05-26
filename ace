@@ -22,6 +22,10 @@ foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
 
         echo "\tStarting " . $command . '...' . ' PID: ' . $process->getPid() . PHP_EOL;
 
+        $process->stderr->on('data', function($outputChunk) use($command) {
+            echo "\t\t ERROR RUNNING COMMAND '$command': " . $outputChunk . PHP_EOL;
+        });
+
         $process->on('exit', function() use($command) {
             echo "\t" . $command . ' finished!' . PHP_EOL;
         });
