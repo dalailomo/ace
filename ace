@@ -18,10 +18,9 @@ foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
 
     foreach($commandChunk as $command) {
         $process = new React\ChildProcess\Process($command);
-
-        echo "\tStarting " . $command . '...' . PHP_EOL;
-
         $process->start($loop);
+
+        echo "\tStarting " . $command . '...' . ' PID: ' . $process->getPid() . PHP_EOL;
 
         $process->on('exit', function() use($command) {
             echo "\t" . $command . ' finished!' . PHP_EOL;
