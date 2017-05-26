@@ -3,16 +3,7 @@
 
 require 'vendor/autoload.php';
 
-function notify($output, $command)
-{
-    echo <<<EOF
-
-"$command":
----------------------------------------
-$output
-
-EOF;
-}
+$start_time = microtime(true);
 
 $config = Symfony\Component\Yaml\Yaml::parse(file_get_contents('config.yml'));
 
@@ -20,21 +11,21 @@ if (null === $config) {
     exit('Config file does not exists');
 }
 
-$loop = React\EventLoop\Factory::create();
+foreach($config['ace']['command-chunks'] as $commandChunk) {
+    $loop = React\EventLoop\Factory::create();
 
-foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
-    array_map(function ($command) use ($loop) {
+    foreach($commandChunk as $command) {
         $process = new React\ChildProcess\Process($command);
         $process->start($loop);
 
-        $process->stdout->on('data', function ($output) use ($command) {
-            notify($output, $command);
+        $process->on('exit', function() use($command) {
+            echo $command . ' finished!' . PHP_EOL;
         });
+    }
 
-        $process->stderr->on('data', function ($output) use ($command) {
-            notify("ERROR [" . $output . "]", $command);
-        });
-    }, $commandChunk);
+    $loop->run();
 }
 
-$loop->run();
+$end_time = microtime(true);
+
+echo 'Time spent: ' . round($end_time - $start_time, 2) . ' seconds' . PHP_EOL;
