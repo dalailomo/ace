@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+require 'vendor/autoload.php';
+
+function notify($output, $command)
+{
+    echo <<<EOF
+
+"$command":
+---------------------------------------
+$output
+
+EOF;
+}
+
+$commands = [
+    'find ~/ -name "README.md"',
+    'find ~/ -name "ace"',
+];
+
+$loop = React\EventLoop\Factory::create();
+
+array_map(function ($command) use ($loop) {
+    $process = new React\ChildProcess\Process($command);
+    $process->start($loop);
+
+    $process->stdout->on('data', function ($output) use ($command) {
+        notify($output, $command);
+    });
+
+    $process->stderr->on('data', function ($output) use ($command) {
+        notify("ERROR [" . $output . "]", $command);
+    });
+}, $commands);
+
+
+$loop->run();
