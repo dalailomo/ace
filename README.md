@@ -3,6 +3,7 @@ Async Command Executer using ReactPHP because... yes
 
 ## How the **** I use this
 
+### Configuration
 The only thing that needs to be done is to create a `config.yml` file in the same working directory of the `ace` executable.
 
 This file defines several chunks of commands. The chunks will be iterated sequentially, but the commands inside of a chunk will be executed asynchronously.
@@ -19,4 +20,10 @@ ace:
             - 'find ~/meows/ -name "kittens"'
             - 'find ~/barks/ -name "puppies"'
             - 'find /pub -name "the_drunken_clam"'
+```
+
+### Running
+
+```bash
+$ ./ace ace:execute
 ```
