@@ -1,0 +1,8 @@
+ace:
+    command-chunks:
+        some-ls:
+            - 'ls /'
+            - 'ls -lha ~/'
+        some-finds:
+            - 'find ~/ -name "a_file"'
+            - 'find / -name "another_file"'
