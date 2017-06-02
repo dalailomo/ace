@@ -2,12 +2,14 @@
 <?php
 
 use DalaiLomo\ACE\Command\ExecuteCommand;
+use DalaiLomo\ACE\Command\SetupCommand;
 use Symfony\Component\Console\Application;
 
 require 'vendor/autoload.php';
 
 $console = new Application();
 
+$console->add(new SetupCommand());
 $console->add(new ExecuteCommand());
 
 $console->run();

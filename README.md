@@ -1,5 +1,5 @@
 # ACE
-Async Command Executer using ReactPHP because... yes
+Async Command Executor using ReactPHP because... yes
 
 ## How the **** I use this
 
