@@ -41,23 +41,24 @@ class SetupCommand extends ACECommand
 
         $menuChoice = $this->mainMenu();
 
-        $this->clearOutputAndShowHeader();
+        while ($menuChoice !== self::OPTION_QUIT) {
+            $this->clearOutputAndShowHeader();
 
-        switch ($menuChoice) {
-            case self::OPTION_LIST_CHUNKS:
-                $this->sectionListCommandChunks();
-                $this->doExecute();
-                break;
-            case self::OPTION_EDIT_CONFIG:
-                $this->sectionEditConfig();
-                $this->doExecute();
-                break;
-            case self::OPTION_QUIT:
-                $this->clearOutput();
-                $this->output->writeln('Bye!');
-                return 0;
+            switch ($menuChoice) {
+                case self::OPTION_LIST_CHUNKS:
+                    $this->sectionListCommandChunks();
+                    break;
+                case self::OPTION_EDIT_CONFIG:
+                    $this->sectionEditConfig();
+                    break;
+            }
+
+            $this->clearOutputAndShowHeader();
+            $menuChoice = $this->mainMenu();
         }
 
+        $this->clearOutput();
+        $this->output->writeln('Bye!');
         return 0;
     }
 
@@ -100,5 +101,7 @@ class SetupCommand extends ACECommand
         } catch (ProcessFailedException $e) {
             echo $e->getMessage();
         }
+
+        $this->config = Yaml::parse(file_get_contents('config.yml'));
     }
 }
