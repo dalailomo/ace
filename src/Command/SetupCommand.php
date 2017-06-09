@@ -37,11 +37,11 @@ class SetupCommand extends ACECommand
     protected function doExecute()
     {
         $this->config = Yaml::parse(file_get_contents('config.yml'));
-        $this->reset();
+        $this->clearOutputAndShowHeader();
 
         $menuChoice = $this->mainMenu();
 
-        $this->reset();
+        $this->clearOutputAndShowHeader();
 
         switch ($menuChoice) {
             case self::OPTION_LIST_CHUNKS:

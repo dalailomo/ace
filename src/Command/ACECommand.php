@@ -43,7 +43,7 @@ abstract class ACECommand extends Command
         $this->output->writeln("");
     }
 
-    protected function reset()
+    protected function clearOutputAndShowHeader()
     {
         $this->clearOutput();
         $this->output->writeln("ACE (Async Command Executor) by DalaiLomo");
