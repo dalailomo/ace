@@ -54,7 +54,7 @@ $ ./ace ace:setup
 
 #### High CPU usage if you are greedy
 
-At the moment, there is no control over the resources used by the commands you put on a chunk, so be careful and try not to put too many commands on a chunk. The CPU usage can go nuts and there is a remote possibility that you can create a high enough energy event pushing a tiny region of the universe from the false vacuum into the true vacuum, creating a bubble that will expand in all directions at the speed of light. 
+At the moment, there is no control over the resources used by the commands you put on a chunk, so be careful and try not to put too many commands on a chunk. The CPU usage can go nuts and there is a remote possibility that you can create a high enough energy event pushing a tiny region of the universe from the false vacuum into the true bacon, creating a bubble that will expand in all directions at the speed of light. 
 
 #### Minimal setup 
 
