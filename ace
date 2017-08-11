@@ -1,11 +1,13 @@
 #!/usr/bin/env php
 <?php
 
+const ACE_ROOT_DIR = __DIR__ . '/';
+
 use DalaiLomo\ACE\Command\ExecuteCommand;
 use DalaiLomo\ACE\Command\SetupCommand;
 use Symfony\Component\Console\Application;
 
-require 'vendor/autoload.php';
+require ACE_ROOT_DIR . 'vendor/autoload.php';
 
 $console = new Application();
 
