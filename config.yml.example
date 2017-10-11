@@ -1,4 +1,4 @@
-ace:
+keynumberone:
     command-chunks:
         some-ls:
             - 'ls /'
@@ -6,3 +6,10 @@ ace:
         some-finds:
             - 'find ~/ -name "a_file"'
             - 'find / -name "another_file"'
+
+keynumbertwo:
+    command-chunks:
+        some-sleepers:
+            - 'sleep 3'
+            - 'sleep 2'
+            - 'sleep 6'

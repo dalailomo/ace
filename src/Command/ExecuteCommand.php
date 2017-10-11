@@ -22,6 +22,7 @@ class ExecuteCommand extends Command
             ->setDescription('Executes commands asynchronously, weeeee!');
 
         $this->addOption('diagnosis', 'd', InputOption::VALUE_NONE, 'Show process diagnosis output while running.');
+        $this->addOption('key', 'k', InputOption::VALUE_OPTIONAL, 'Key of chunks to execute.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,7 +36,14 @@ class ExecuteCommand extends Command
             return -1;
         }
 
-        foreach($config['ace']['command-chunks'] as $chunkName => $commandChunk) {
+        $key = $input->getOption('key');
+
+        if (null === $key) {
+            $output->writeln('<error>No key given</error>');
+            return -1;
+        }
+
+        foreach($config[$key]['command-chunks'] as $chunkName => $commandChunk) {
             $loop = EventFactory::create();
 
             $output->writeln(CommandOutputHelper::ninjaSeparator());
