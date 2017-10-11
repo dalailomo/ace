@@ -29,6 +29,7 @@ class ExecuteCommand extends Command
     {
         $start_time = microtime(true);
 
+        $key = $input->getOption('key');
         $config = Yaml::parse(file_get_contents(ACE_ROOT_DIR . 'config.yml'));
 
         if (null === $config) {
@@ -36,13 +37,31 @@ class ExecuteCommand extends Command
             return -1;
         }
 
-        $key = $input->getOption('key');
-
         if (null === $key) {
             $output->writeln('<error>No key given</error>');
             return -1;
         }
 
+        if (false === isset($config[$key])) {
+            $output->writeln(sprintf('<error>Key "%s" is invalid</error>', $key));
+            return -1;
+        }
+
+        $this->executeChunks($config, $key, $output, $input);
+
+        $end_time = microtime(true);
+
+        $output->writeln(CommandOutputHelper::ninjaSeparator());
+        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", round($end_time - $start_time, 2)));
+
+        $output->writeln('Log file: ' . $this->logToFile($key));
+        $output->writeln(CommandOutputHelper::ninjaSeparator());
+
+        return 0;
+    }
+
+    private function executeChunks($config, $key, $output, $input)
+    {
         foreach($config[$key]['command-chunks'] as $chunkName => $commandChunk) {
             $loop = EventFactory::create();
 
@@ -98,16 +117,6 @@ class ExecuteCommand extends Command
 
             $loop->run();
         }
-
-        $end_time = microtime(true);
-
-        $output->writeln(CommandOutputHelper::ninjaSeparator());
-        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", round($end_time - $start_time, 2)));
-
-        $output->writeln('Log file: ' . $this->logToFile());
-        $output->writeln(CommandOutputHelper::ninjaSeparator());
-
-        return 0;
     }
 
     private function collectOutput($key, $pid, $outputChunk, $command)
@@ -117,10 +126,10 @@ class ExecuteCommand extends Command
             : $this->output[$pid][$command][$key] = $outputChunk;
     }
 
-    private function logToFile()
+    private function logToFile($key)
     {
         $file = new \SplFileObject(ACE_ROOT_DIR . 'var/log/' . time() . '.log.json', 'w');
-        $file->fwrite(json_encode($this->output));
+        $file->fwrite(json_encode([$key => $this->output]));
         return $file->getRealPath();
     }
 }

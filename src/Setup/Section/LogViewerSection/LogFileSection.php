@@ -19,9 +19,15 @@ class LogFileSection extends AbstractSection
      */
     private $logFilePath;
 
+    /**
+     * @var array
+     */
+    private $parsedJson;
+
     public function __construct($logFilePath)
     {
         $this->logFilePath = $logFilePath;
+        $this->parsedJson = json_decode(file_get_contents($this->logFilePath), true);
     }
 
     public function getSectionName()
@@ -31,30 +37,30 @@ class LogFileSection extends AbstractSection
 
     public function doAction()
     {
-        $parsedJson = json_decode(file_get_contents($this->logFilePath), true);
-
         $output = '';
 
-        foreach ($parsedJson as $chunk) {
-            $output .= CommandOutputHelper::ninjaSeparator();
-            $output .= CommandOutputHelper::oldSchoolSeparator();
-            $output .= array_keys($chunk)[0] . PHP_EOL;
-            $output .= CommandOutputHelper::oldSchoolSeparator();
-            $output .= CommandOutputHelper::ninjaSeparator();
-
-            foreach($chunk as $chunkStreams) {
-                $output .= 'STDOUT' . PHP_EOL;
+        foreach ($this->parsedJson as $processes) {
+            foreach ($processes as $chunk) {
+                $output .= CommandOutputHelper::ninjaSeparator();
                 $output .= CommandOutputHelper::oldSchoolSeparator();
-                $output .= isset($chunkStreams['stdout']) ? $chunkStreams['stdout'] : '';
+                $output .= array_keys($chunk)[0] . PHP_EOL;
+                $output .= CommandOutputHelper::oldSchoolSeparator();
                 $output .= CommandOutputHelper::ninjaSeparator();
 
-                $output .= 'STDERR' . PHP_EOL;
-                $output .= CommandOutputHelper::oldSchoolSeparator();
-                $output .= isset($chunkStreams['stderr']) ? $chunkStreams['stderr'] : '';
+                foreach($chunk as $chunkStreams) {
+                    $output .= 'STDOUT' . PHP_EOL;
+                    $output .= CommandOutputHelper::oldSchoolSeparator();
+                    $output .= isset($chunkStreams['stdout']) ? $chunkStreams['stdout'] : '';
+                    $output .= CommandOutputHelper::ninjaSeparator();
+
+                    $output .= 'STDERR' . PHP_EOL;
+                    $output .= CommandOutputHelper::oldSchoolSeparator();
+                    $output .= isset($chunkStreams['stderr']) ? $chunkStreams['stderr'] : '';
+                    $output .= CommandOutputHelper::ninjaSeparator();
+                }
+
                 $output .= CommandOutputHelper::ninjaSeparator();
             }
-
-            $output .= CommandOutputHelper::ninjaSeparator();
         }
 
         $process = new Process(sprintf('echo "%s" | less', $output));
@@ -77,11 +83,12 @@ class LogFileSection extends AbstractSection
         $logLastToken = end($logTokens);
         $logTimestamp = explode('.', $logLastToken)[0];
 
-        $output = 'Log: ' . date(\DateTime::ISO8601, $logTimestamp);
+        $output = array_keys($this->parsedJson)[0] . ' @ ' . date(\DateTime::ISO8601, $logTimestamp);
 
         return $this->flagFileNameIfBlacklistedContentIsFound($output, $logFile);
     }
 
+    // TODO: change the way to do this
     private function flagFileNameIfBlacklistedContentIsFound($output, $logFile)
     {
         $fileContents = file_get_contents($logFile);
