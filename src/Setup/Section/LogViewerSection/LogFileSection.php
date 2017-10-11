@@ -77,7 +77,7 @@ class LogFileSection extends AbstractSection
         $logLastToken = end($logTokens);
         $logTimestamp = explode('.', $logLastToken)[0];
 
-        $output = date(\DateTime::ISO8601, $logTimestamp);
+        $output = 'Log: ' . date(\DateTime::ISO8601, $logTimestamp);
 
         return $this->flagFileNameIfBlacklistedContentIsFound($output, $logFile);
     }
