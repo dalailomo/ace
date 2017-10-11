@@ -5,14 +5,34 @@ namespace DalaiLomo\ACE\Setup\Section;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractSection implements Section
 {
+    /**
+     * @var InputInterface
+     */
     protected $input;
 
+    /**
+     * @var OutputInterface
+     */
     protected $output;
 
+    /**
+     * @var QuestionHelper
+     */
     protected $question;
+
+    /**
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * @var string
+     */
+    protected $configFilePath;
 
     abstract public function getSectionName();
 
@@ -47,5 +67,11 @@ abstract class AbstractSection implements Section
         $this->question = $question;
 
         return $this;
+    }
+
+    public function setAndParseConfig($configFilePath)
+    {
+        $this->configFilePath = $configFilePath;
+        $this->config = Yaml::parse(file_get_contents($configFilePath));
     }
 }

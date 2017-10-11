@@ -9,7 +9,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface Menu
 {
-    public static function create(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper);
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        $configFilePath
+    );
 
     public function registerSection(Section $section);
 

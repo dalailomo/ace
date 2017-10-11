@@ -19,15 +19,15 @@ class LogViewerSection extends AbstractSection
     {
         $logFileList = $this->getLogFileList();
 
-        $interactiveMenu = InteractiveMenu::create($this->input, $this->output, $this->question)
-            ->setOptionQuitText('Back to main menu');
+        $interactiveMenu = new InteractiveMenu($this->input, $this->output, $this->question, $this->configFilePath);
+        $interactiveMenu->setOptionQuitText('Back to main menu');
 
         $i = 0;
         array_map(function($logFile) use($interactiveMenu, &$i) {
             if ($i >= 10) {
                 return;
             }
-            $interactiveMenu->registerSection(LogFileSection::create()->setFilePath(self::LOG_FILES_DIR . $logFile));
+            $interactiveMenu->registerSection(new LogFileSection(self::LOG_FILES_DIR . $logFile));
             $i++;
         }, $logFileList);
 

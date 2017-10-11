@@ -34,22 +34,28 @@ class InteractiveMenu implements Menu
     private $sections = [];
 
     /**
+     * @var string
+     */
+    private $configFilePath;
+
+    /**
      * @var array
      */
     private $choices = [
         self::OPTION_QUIT => 'Quit',
     ];
 
-    private function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
-    {
+
+    public function __construct(
+        InputInterface $input,
+        OutputInterface $output,
+        QuestionHelper $questionHelper,
+        $configFilePath
+    ) {
         $this->input = $input;
         $this->output = $output;
         $this->questionHelper = $questionHelper;
-    }
-
-    public static function create(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
-    {
-        return new static($input, $output, $questionHelper);
+        $this->configFilePath = $configFilePath;
     }
 
     public function setOptionQuitText($text)
@@ -113,6 +119,8 @@ class InteractiveMenu implements Menu
             $section->setInputInterface($this->input);
             $section->setOutputInterface($this->output);
             $section->setQuestionHelper($this->questionHelper);
+            $section->setAndParseConfig($this->configFilePath);
+
             $this->choices[] = $section;
         }, $this->sections);
     }

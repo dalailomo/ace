@@ -9,6 +9,7 @@ use DalaiLomo\ACE\Setup\Section\LogViewerSection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class SetupCommand extends Command
 {
@@ -21,13 +22,13 @@ class SetupCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configFile = ACE_ROOT_DIR . 'config.yml';
+        $interactiveMenu = new InteractiveMenu($input, $output, $this->getHelper('question'), ACE_ROOT_DIR . 'config.yml');
 
-        InteractiveMenu::create($input, $output, $this->getHelper('question'))
-            ->registerSection(ListCommandChunksSection::create()->setFilePath($configFile))
-            ->registerSection(EditConfigurationFileSection::create()->setFilePath($configFile))
-            ->registerSection(LogViewerSection::create())
-            ->run();
+        $interactiveMenu->registerSection(new ListCommandChunksSection());
+        $interactiveMenu->registerSection(new EditConfigurationFileSection());
+        $interactiveMenu->registerSection(new LogViewerSection());
+
+        $interactiveMenu->run();
 
         return 0;
     }

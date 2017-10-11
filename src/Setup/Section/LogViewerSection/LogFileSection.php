@@ -4,27 +4,34 @@ namespace DalaiLomo\ACE\Setup\Section\LogViewerSection;
 
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Setup\Section\AbstractSection;
-use DalaiLomo\ACE\Setup\Section\FileReadable;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class LogFileSection extends AbstractSection implements FileReadable
+class LogFileSection extends AbstractSection
 {
-    private $filePath;
-
     // TODO make blacklist configurable
     private $blacklist = [
         'exception'
     ];
 
+    /**
+     * @var string
+     */
+    private $logFilePath;
+
+    public function __construct($logFilePath)
+    {
+        $this->logFilePath = $logFilePath;
+    }
+
     public function getSectionName()
     {
-        return $this->decorateLogFileName($this->filePath);
+        return $this->decorateLogFileName($this->logFilePath);
     }
 
     public function doAction()
     {
-        $parsedJson = json_decode(file_get_contents($this->filePath), true);
+        $parsedJson = json_decode(file_get_contents($this->logFilePath), true);
 
         $output = '';
 
@@ -62,13 +69,6 @@ class LogFileSection extends AbstractSection implements FileReadable
         }
 
         $this->output->writeln(CommandOutputHelper::clearOutput());
-    }
-
-    public function setFilePath($filePath)
-    {
-        $this->filePath = $filePath;
-
-        return $this;
     }
 
     private function decorateLogFileName($logFile)

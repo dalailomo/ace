@@ -18,6 +18,8 @@ interface Section
 
     public function setQuestionHelper(QuestionHelper $questionHelper);
 
+    public function setAndParseConfig($configFilePath);
+
     public function __toString();
 
     public function doAction();
