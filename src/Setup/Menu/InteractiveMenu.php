@@ -52,6 +52,13 @@ class InteractiveMenu implements Menu
         return new static($input, $output, $questionHelper);
     }
 
+    public function setOptionQuitText($text)
+    {
+        $this->choices[self::OPTION_QUIT] = $text;
+
+        return $this;
+    }
+
     public function registerSection(Section $section)
     {
         $this->sections[] = $section;
@@ -103,6 +110,9 @@ class InteractiveMenu implements Menu
     private function prepareSections()
     {
         array_map(function(Section $section) {
+            $section->setInputInterface($this->input);
+            $section->setOutputInterface($this->output);
+            $section->setQuestionHelper($this->questionHelper);
             $this->choices[] = $section;
         }, $this->sections);
     }

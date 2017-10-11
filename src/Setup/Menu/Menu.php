@@ -13,5 +13,7 @@ interface Menu
 
     public function registerSection(Section $section);
 
+    public function setOptionQuitText($text);
+
     public function run();
 }
