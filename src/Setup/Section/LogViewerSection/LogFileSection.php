@@ -39,26 +39,24 @@ class LogFileSection extends AbstractSection
     {
         $output = '';
 
-        foreach ($this->parsedJson as $processes) {
-            foreach ($processes as $chunk) {
-                $output .= CommandOutputHelper::ninjaSeparator();
-                $output .= CommandOutputHelper::oldSchoolSeparator();
-                $output .= array_keys($chunk)[0] . PHP_EOL;
-                $output .= CommandOutputHelper::oldSchoolSeparator();
-                $output .= CommandOutputHelper::ninjaSeparator();
-
-                foreach($chunk as $chunkStreams) {
-                    $output .= 'STDOUT' . PHP_EOL;
+        foreach (reset($this->parsedJson) as $chunkName => $chunk) {
+            foreach($chunk as $command) {
+                foreach ($command as $commandName => $chunkStreams) {
+                    $output .= CommandOutputHelper::oldSchoolSeparator();
+                    $output .= $chunkName . ' : ' . $commandName . ' >> STDOUT'.PHP_EOL;
                     $output .= CommandOutputHelper::oldSchoolSeparator();
                     $output .= isset($chunkStreams['stdout']) ? $chunkStreams['stdout'] : '';
                     $output .= CommandOutputHelper::ninjaSeparator();
 
-                    $output .= 'STDERR' . PHP_EOL;
+                    $output .= CommandOutputHelper::oldSchoolSeparator();
+                    $output .= $chunkName . ' : ' . $commandName . ' >> STDERR'.PHP_EOL;
                     $output .= CommandOutputHelper::oldSchoolSeparator();
                     $output .= isset($chunkStreams['stderr']) ? $chunkStreams['stderr'] : '';
                     $output .= CommandOutputHelper::ninjaSeparator();
                 }
 
+                $output .= CommandOutputHelper::ninjaSeparator();
+                $output .= CommandOutputHelper::ninjaSeparator();
                 $output .= CommandOutputHelper::ninjaSeparator();
             }
         }

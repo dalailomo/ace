@@ -96,6 +96,6 @@ class ChunkExecutor
 
         $processChunk->runLoop();
 
-        $this->commandsOutput = $processChunk->getCommandsOutput();
+        $this->commandsOutput[$chunkName] = $processChunk->getCommandsOutput();
     }
 }

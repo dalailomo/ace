@@ -108,10 +108,10 @@ class ProcessChunk
         $this->output->writeln("$streamOutput");
     }
 
-    private function collectOutput($key, $pid, $outputChunk, $command)
+    private function collectOutput($stream, $pid, $outputChunk, $command)
     {
-        isset($this->commandsOutput[$pid][$command][$key])
-            ? $this->commandsOutput[$pid][$command][$key] .= $outputChunk
-            : $this->commandsOutput[$pid][$command][$key] = $outputChunk;
+        isset($this->commandsOutput[$pid][$command][$stream])
+            ? $this->commandsOutput[$pid][$command][$stream] .= $outputChunk
+            : $this->commandsOutput[$pid][$command][$stream] = $outputChunk;
     }
 }
