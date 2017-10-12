@@ -2,10 +2,10 @@
 
 namespace DalaiLomo\ACE\Setup\Section;
 
+use DalaiLomo\ACE\Config\ACEConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractSection implements Section
 {
@@ -25,7 +25,7 @@ abstract class AbstractSection implements Section
     protected $question;
 
     /**
-     * @var array
+     * @var ACEConfig
      */
     protected $config;
 
@@ -69,9 +69,8 @@ abstract class AbstractSection implements Section
         return $this;
     }
 
-    public function setAndParseConfig($configFilePath)
+    public function setConfig(ACEConfig $ACEConfig)
     {
-        $this->configFilePath = $configFilePath;
-        $this->config = Yaml::parse(file_get_contents($configFilePath));
+        $this->config = $ACEConfig;
     }
 }

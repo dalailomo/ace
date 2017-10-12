@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Setup\Section;
 
+use DalaiLomo\ACE\Config\ACEConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,7 +19,7 @@ interface Section
 
     public function setQuestionHelper(QuestionHelper $questionHelper);
 
-    public function setAndParseConfig($configFilePath);
+    public function setConfig(ACEConfig $ACEConfig);
 
     public function __toString();
 

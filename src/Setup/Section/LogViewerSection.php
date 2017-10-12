@@ -19,7 +19,7 @@ class LogViewerSection extends AbstractSection
     {
         $logFileList = $this->getLogFileList();
 
-        $interactiveMenu = new InteractiveMenu($this->input, $this->output, $this->question, $this->configFilePath);
+        $interactiveMenu = new InteractiveMenu($this->input, $this->output, $this->question, $this->config);
         $interactiveMenu->setOptionQuitText('Back to main menu');
 
         $i = 0;

@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Chunk;
 
+use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use React\ChildProcess\Process;
 use React\EventLoop\Factory as EventFactory;
@@ -11,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ChunkExecutor
 {
     /**
-     * @var array
+     * @var ACEConfig
      */
     private $config;
 
@@ -30,7 +31,12 @@ class ChunkExecutor
      */
     private $output;
 
-    public function __construct(array $config, $key, InputInterface $input, OutputInterface $output)
+    /**
+     * @var array
+     */
+    private $commandsOutput = [];
+
+    public function __construct(ACEConfig $config, $key, InputInterface $input, OutputInterface $output)
     {
         $this->config = $config;
         $this->key = $key;
@@ -40,7 +46,7 @@ class ChunkExecutor
 
     public function executeChunks()
     {
-        foreach($this->config[$this->key]['command-chunks'] as $chunkName => $commandChunk) {
+        $this->config->onEachChunk($this->key, function($commandChunk, $chunkName) {
             $loop = EventFactory::create();
 
             $this->output->writeln(CommandOutputHelper::ninjaSeparator());
@@ -94,7 +100,7 @@ class ChunkExecutor
             }
 
             $loop->run();
-        }
+        });
     }
 
     public function getTimeSpent()
@@ -102,11 +108,15 @@ class ChunkExecutor
         return 0;
     }
 
+    public function getCommandsOutput()
+    {
+        return $this->commandsOutput;
+    }
 
     private function collectOutput($key, $pid, $outputChunk, $command)
     {
-        isset($this->output[$pid][$command][$key])
-            ? $this->output[$pid][$command][$key] .= $outputChunk
-            : $this->output[$pid][$command][$key] = $outputChunk;
+        isset($this->commandsOutput[$pid][$command][$key])
+            ? $this->commandsOutput[$pid][$command][$key] .= $outputChunk
+            : $this->commandsOutput[$pid][$command][$key] = $outputChunk;
     }
 }

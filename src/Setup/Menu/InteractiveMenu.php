@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Setup\Menu;
 
+use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Setup\Section\Section;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -9,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class InteractiveMenu implements Menu
+class InteractiveMenu
 {
     const OPTION_QUIT = 0;
 
@@ -34,9 +35,9 @@ class InteractiveMenu implements Menu
     private $sections = [];
 
     /**
-     * @var string
+     * @var ACEConfig
      */
-    private $configFilePath;
+    private $aceConfig;
 
     /**
      * @var array
@@ -50,12 +51,12 @@ class InteractiveMenu implements Menu
         InputInterface $input,
         OutputInterface $output,
         QuestionHelper $questionHelper,
-        $configFilePath
+        ACEConfig $aceConfig
     ) {
         $this->input = $input;
         $this->output = $output;
         $this->questionHelper = $questionHelper;
-        $this->configFilePath = $configFilePath;
+        $this->aceConfig = $aceConfig;
     }
 
     public function setOptionQuitText($text)
@@ -119,7 +120,7 @@ class InteractiveMenu implements Menu
             $section->setInputInterface($this->input);
             $section->setOutputInterface($this->output);
             $section->setQuestionHelper($this->questionHelper);
-            $section->setAndParseConfig($this->configFilePath);
+            $section->setConfig($this->aceConfig);
 
             $this->choices[] = $section;
         }, $this->sections);

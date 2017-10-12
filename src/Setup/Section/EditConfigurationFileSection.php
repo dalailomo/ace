@@ -14,7 +14,7 @@ class EditConfigurationFileSection extends AbstractSection
 
     public function doAction()
     {
-        $process = new Process('vim ' . $this->configFilePath);
+        $process = new Process('vim ' . $this->config->getConfigFilePath());
 
         try {
             $process->setTty(true);

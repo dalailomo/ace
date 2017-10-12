@@ -2,8 +2,12 @@
 
 namespace DalaiLomo\ACE\Setup\Section;
 
+use DalaiLomo\ACE\Helper\CommandOutputHelper;
+
 class ListCommandChunksSection extends AbstractSection
 {
+    private $sectionOutput = '';
+
     public function getSectionName()
     {
         return 'List command chunks';
@@ -11,12 +15,18 @@ class ListCommandChunksSection extends AbstractSection
 
     public function doAction()
     {
-        $output = '';
+        $this->config->onEachKey(function($chunkList, $key) {
+            $this->sectionOutput .= sprintf(
+                "<fg=magenta>%s</>", $key . PHP_EOL . CommandOutputHelper::oldSchoolSeparator()
+            );
 
-        foreach ($this->config['ace']['command-chunks'] as $chunkName => $chunk) {
-            $output .= sprintf("<fg=green>%s</>\n%s\n", $chunkName, implode(PHP_EOL, $chunk));
-        }
+            $this->config->onEachChunk($key, function($commandChunk, $chunkName) {
+                $this->sectionOutput .= sprintf(
+                    "<fg=green>%s</>\n%s\n\n", $chunkName, implode(PHP_EOL, $commandChunk)
+                );
+            });
+        });
 
-        return $output;
+        return $this->sectionOutput;
     }
 }

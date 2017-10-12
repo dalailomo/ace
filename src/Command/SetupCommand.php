@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Command;
 
+use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Setup\Menu\InteractiveMenu;
 use DalaiLomo\ACE\Setup\Section\EditConfigurationFileSection;
 use DalaiLomo\ACE\Setup\Section\ListCommandChunksSection;
@@ -21,7 +22,12 @@ class SetupCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $interactiveMenu = new InteractiveMenu($input, $output, $this->getHelper('question'), ACE_ROOT_DIR . 'config.yml');
+        $interactiveMenu = new InteractiveMenu(
+            $input,
+            $output,
+            $this->getHelper('question'),
+            new ACEConfig(ACE_ROOT_DIR . 'config.yml')
+        );
 
         $interactiveMenu->registerSection(new ListCommandChunksSection());
         $interactiveMenu->registerSection(new EditConfigurationFileSection());
