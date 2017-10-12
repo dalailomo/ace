@@ -16,16 +16,6 @@ class LogDecorator
      */
     private $parsedLog;
 
-    /**
-     * @var string
-     */
-    private $logOutput;
-
-    // TODO make blacklist configurable
-    private $blacklist = [
-        'exception'
-    ];
-
     public function __construct($logFile)
     {
         $this->logFile = $logFile;
@@ -40,7 +30,7 @@ class LogDecorator
 
         $output = array_keys($this->parsedLog)[0] . ' @ ' . date(\DateTime::ISO8601, $logTimestamp);
 
-        return $this->flagFileNameIfBlacklistedContentIsFound($output, $this->logFile);
+        return $output;
     }
 
     public function getStreamsOutput()
@@ -62,20 +52,6 @@ class LogDecorator
                     $output .= isset($chunkStreams['stderr']) ? $chunkStreams['stderr'] : '';
                     $output .= CommandOutputHelper::ninjaSeparator();
                 }
-            }
-        }
-
-        return $output;
-    }
-
-    // TODO: change the way to do this
-    private function flagFileNameIfBlacklistedContentIsFound($output, $logFile)
-    {
-        $fileContents = file_get_contents($logFile);
-
-        foreach ($this->blacklist as $blacklistElement) {
-            if (strpos(strtolower($fileContents), strtolower($blacklistElement))) {
-                $output .= ' *' . $blacklistElement;
             }
         }
 
