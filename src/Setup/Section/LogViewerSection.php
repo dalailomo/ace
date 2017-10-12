@@ -25,7 +25,7 @@ class LogViewerSection extends AbstractSection
         $interactiveMenu->setOptionQuitText('Back to main menu');
 
         $logScanner->onEachLogFile(function($logFile) use ($interactiveMenu) {
-            $interactiveMenu->registerSection(new LogFileSection(new LogDecorator($logFile)));
+            $interactiveMenu->registerSection(new LogFileSection(new LogDecorator($logFile, $this->config)));
         });
 
         $interactiveMenu->run();

@@ -20,6 +20,12 @@ yourkey:
             - 'sleep 6'
             - 'sleep 2'
             - 'sleep 4'
+    highlight-keywords:
+        - 'words'
+        - 'to be'
+        - 'highlighted'
+        - 'if found in output'
+        - 'on each command'
 ```
 
 ### Running

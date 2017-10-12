@@ -7,6 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 class ACEConfig
 {
     const COMMAND_CHUNKS_KEY = 'command-chunks';
+    const HIGHLIGHT_KEYWORDS_KEY = 'highlight-keywords';
 
     /**
      * @var array
@@ -54,5 +55,12 @@ class ACEConfig
     public function getConfigFilePath()
     {
         return $this->configFilePath;
+    }
+
+    public function getKeywordsToHighlight($key)
+    {
+        return isset($this->config[$key][self::HIGHLIGHT_KEYWORDS_KEY])
+            ? $this->config[$key][self::HIGHLIGHT_KEYWORDS_KEY]
+            : [];
     }
 }
