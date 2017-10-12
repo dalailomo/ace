@@ -6,6 +6,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class ACEConfig
 {
+    const COMMAND_CHUNKS_KEY = 'command-chunks';
+
     /**
      * @var array
      */
@@ -28,9 +30,16 @@ class ACEConfig
         $this->configFilePath = $configFilePath;
     }
 
+    public function onEachProcess($key, $chunkName, \Closure $closure)
+    {
+        foreach ($this->config[$key][self::COMMAND_CHUNKS_KEY][$chunkName] as $command) {
+            $closure($command);
+        }
+    }
+
     public function onEachChunk($key, \Closure $closure)
     {
-        foreach ($this->config[$key]['command-chunks'] as $chunkName => $commandChunk) {
+        foreach ($this->config[$key][self::COMMAND_CHUNKS_KEY] as $chunkName => $commandChunk) {
             $closure($commandChunk, $chunkName);
         }
     }

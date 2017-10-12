@@ -4,6 +4,7 @@ namespace DalaiLomo\ACE\Chunk;
 
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
+use DalaiLomo\ACE\Process\ProcessChunk;
 use React\ChildProcess\Process;
 use React\EventLoop\Factory as EventFactory;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,6 +37,11 @@ class ChunkExecutor
      */
     private $commandsOutput = [];
 
+    /**
+     * @var float
+     */
+    private $timeSpent;
+
     public function __construct(ACEConfig $config, $key, InputInterface $input, OutputInterface $output)
     {
         $this->config = $config;
@@ -46,66 +52,20 @@ class ChunkExecutor
 
     public function executeChunks()
     {
+        $startTime = microtime(true);
+
         $this->config->onEachChunk($this->key, function($commandChunk, $chunkName) {
-            $loop = EventFactory::create();
-
-            $this->output->writeln(CommandOutputHelper::ninjaSeparator());
-            $this->output->writeln(sprintf("Starting chunk <info>%s</info>", $chunkName));
-
-            foreach($commandChunk as $command) {
-                $process = new Process($command);
-                $process->start($loop);
-
-                $this->output->writeln(
-                    sprintf(
-                        "Started <fg=magenta>%s</> : <info>%s</info>",
-                        $process->getPid(),
-                        $command
-                    )
-                );
-
-                $process->on('exit', function() use($command, $process) {
-                    $this->output->writeln(
-                        sprintf(
-                            "Finished <fg=magenta>%s</> : <info>%s</info> : Exit code (<fg=%s>%s</>)",
-                            $process->getPid(),
-                            $command,
-                            ($process->getExitCode() === -1) ? 'red' : 'green',
-                            $process->getExitCode()
-                        )
-                    );
-                });
-
-                $process->stdout->on('data', function($outputChunk) use($command, $process) {
-                    $this->collectOutput('stdout', $process->getPid(), $outputChunk, $command);
-                });
-
-                $process->stderr->on('data', function($outputChunk) use($command, $process) {
-                    $this->collectOutput('stderr', $process->getPid(), $outputChunk, $command);
-
-                    if (false === $this->input->getOption('diagnosis')) {
-                        return;
-                    }
-
-                    $this->output->writeln(CommandOutputHelper::ninjaSeparator());
-                    $this->output->writeln(
-                        sprintf(
-                            "<fg=blue>Diagnosis output</> <fg=magenta>%s</> : <info>'%s</info>'",
-                            $process->getPid(),
-                            $command
-                        )
-                    );
-                    $this->output->writeln("$outputChunk");
-                });
-            }
-
-            $loop->run();
+            $this->createAndRunProcessChunk($chunkName);
         });
+
+        $endTime = microtime(true);
+
+        $this->timeSpent = round($endTime - $startTime, 2);
     }
 
     public function getTimeSpent()
     {
-        return 0;
+        return $this->timeSpent;
     }
 
     public function getCommandsOutput()
@@ -113,10 +73,29 @@ class ChunkExecutor
         return $this->commandsOutput;
     }
 
-    private function collectOutput($key, $pid, $outputChunk, $command)
+    private function createAndRunProcessChunk($chunkName)
     {
-        isset($this->commandsOutput[$pid][$command][$key])
-            ? $this->commandsOutput[$pid][$command][$key] .= $outputChunk
-            : $this->commandsOutput[$pid][$command][$key] = $outputChunk;
+        $this->output->writeln(CommandOutputHelper::ninjaSeparator());
+        $this->output->writeln(sprintf("Starting chunk <info>%s</info>", $chunkName));
+
+        $processChunk = new ProcessChunk(EventFactory::create(), $this->input, $this->output);
+
+        $this->config->onEachProcess($this->key, $chunkName, function($command) use($processChunk) {
+            $process = new Process($command);
+
+            $this->output->writeln(
+                sprintf(
+                    "Started <fg=magenta>%s</> : <info>%s</info>",
+                    $process->getPid(),
+                    $command
+                )
+            );
+
+            $processChunk->add($process);
+        });
+
+        $processChunk->runLoop();
+
+        $this->commandsOutput = $processChunk->getCommandsOutput();
     }
 }
