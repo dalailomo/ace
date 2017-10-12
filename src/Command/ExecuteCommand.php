@@ -2,9 +2,8 @@
 
 namespace DalaiLomo\ACE\Command;
 
+use DalaiLomo\ACE\Chunk\ChunkExecutor;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
-use React\ChildProcess\Process;
-use React\EventLoop\Factory as EventFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,8 +26,6 @@ class ExecuteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $start_time = microtime(true);
-
         $key = $input->getOption('key');
         $config = Yaml::parse(file_get_contents(ACE_ROOT_DIR . 'config.yml'));
 
@@ -47,83 +44,16 @@ class ExecuteCommand extends Command
             return -1;
         }
 
-        $this->executeChunks($config, $key, $output, $input);
-
-        $end_time = microtime(true);
+        $chunkExecutor = new ChunkExecutor($config, $key, $input, $output);
+        $chunkExecutor->executeChunks();
 
         $output->writeln(CommandOutputHelper::ninjaSeparator());
-        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", round($end_time - $start_time, 2)));
+        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", $chunkExecutor->getTimeSpent()));
 
         $output->writeln('Log file: ' . $this->logToFile($key));
         $output->writeln(CommandOutputHelper::ninjaSeparator());
 
         return 0;
-    }
-
-    private function executeChunks($config, $key, $output, $input)
-    {
-        foreach($config[$key]['command-chunks'] as $chunkName => $commandChunk) {
-            $loop = EventFactory::create();
-
-            $output->writeln(CommandOutputHelper::ninjaSeparator());
-            $output->writeln(sprintf("Starting chunk <info>%s</info>", $chunkName));
-
-            foreach($commandChunk as $command) {
-                $process = new Process($command);
-                $process->start($loop);
-
-                $output->writeln(
-                    sprintf(
-                        "Started <fg=magenta>%s</> : <info>%s</info>",
-                        $process->getPid(),
-                        $command
-                    )
-                );
-
-                $process->on('exit', function() use($command, $process, $output) {
-                    $output->writeln(
-                        sprintf(
-                            "Finished <fg=magenta>%s</> : <info>%s</info> : Exit code (<fg=%s>%s</>)",
-                            $process->getPid(),
-                            $command,
-                            ($process->getExitCode() === -1) ? 'red' : 'green',
-                            $process->getExitCode()
-                        )
-                    );
-                });
-
-                $process->stdout->on('data', function($outputChunk) use($command, $process) {
-                    $this->collectOutput('stdout', $process->getPid(), $outputChunk, $command);
-                });
-
-                $process->stderr->on('data', function($outputChunk) use($command, $process, $output, $input) {
-                    $this->collectOutput('stderr', $process->getPid(), $outputChunk, $command);
-
-                    if (false === $input->getOption('diagnosis')) {
-                        return;
-                    }
-
-                    $output->writeln(CommandOutputHelper::ninjaSeparator());
-                    $output->writeln(
-                        sprintf(
-                            "<fg=blue>Diagnosis output</> <fg=magenta>%s</> : <info>'%s</info>'",
-                            $process->getPid(),
-                            $command
-                        )
-                    );
-                    $output->writeln("$outputChunk");
-                });
-            }
-
-            $loop->run();
-        }
-    }
-
-    private function collectOutput($key, $pid, $outputChunk, $command)
-    {
-        isset($this->output[$pid][$command][$key])
-            ? $this->output[$pid][$command][$key] .= $outputChunk
-            : $this->output[$pid][$command][$key] = $outputChunk;
     }
 
     private function logToFile($key)
