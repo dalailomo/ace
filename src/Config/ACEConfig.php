@@ -21,11 +21,11 @@ class ACEConfig
 
     public function __construct($configFilePath)
     {
-        $fileContents = file_get_contents($configFilePath);
-
-        if (false === $fileContents) {
+        if (false === file_exists($configFilePath)) {
             throw new \InvalidArgumentException('Config file not found');
         }
+
+        $fileContents = file_get_contents($configFilePath);
 
         $this->config = Yaml::parse($fileContents);
         $this->configFilePath = $configFilePath;

@@ -1,0 +1,20 @@
+fooKey:
+    command-chunks:
+        fooChunk:
+            - 'echo "a"'
+            - 'echo "b"'
+            - 'idontexist'
+            - 'echo "c"'
+
+barKey:
+    command-chunks:
+        bazChunk:
+            - 'echo "hello"'
+            - 'echo "world"'
+            - 'echo "on fire"'
+        booChunk:
+            - 'echo "fantasmikos"'
+            - 'echo "in the night"'
+            - 'echo "oscura"'
+    highlight-keywords:
+        - 'fire'

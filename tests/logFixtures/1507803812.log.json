@@ -1,0 +1,38 @@
+{
+    "echoes": {
+        "echosOne": {
+            "88218": {
+                "echo \"a\"": {
+                    "stdout": "a\n"
+                }
+            },
+            "88219": {
+                "echo \"b\"": {
+                    "stdout": "b\n"
+                }
+            },
+            "88220": {
+                "echo \"c\"": {
+                    "stdout": "c\n"
+                }
+            }
+        },
+        "echosTwo": {
+            "88221": {
+                "echo \"d\"": {
+                    "stdout": "d\n"
+                }
+            },
+            "88222": {
+                "echo \"e\"": {
+                    "stdout": "e\n"
+                }
+            },
+            "88223": {
+                "echo \"f\"": {
+                    "stdout": "f\n"
+                }
+            }
+        }
+    }
+}

@@ -42,12 +42,8 @@ class LogScanner
 
     private function scanForLogs($logFilePath)
     {
-        $logFiles = array_filter(scandir($logFilePath), function($file) {
+        return array_filter(scandir($logFilePath, 1), function($file) {
             return strpos($file, self::LOG_EXTENSION);
         });
-
-        arsort($logFiles);
-
-        return $logFiles;
     }
 }

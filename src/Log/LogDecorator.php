@@ -10,17 +10,17 @@ class LogDecorator
     /**
      * @var string
      */
-    private $logName;
+    private $logName = '';
 
     /**
      * @var array
      */
-    private $parsedLog;
+    private $parsedLog = [];
 
     /**
      * @var string
      */
-    private $streamsOutput;
+    private $streamsOutput = '';
 
     /**
      * @var ACEConfig
