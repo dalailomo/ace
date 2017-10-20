@@ -85,8 +85,7 @@ class ChunkExecutor
 
             $this->output->writeln(
                 sprintf(
-                    "Started <fg=magenta>%s</> : <info>%s</info>",
-                    $process->getPid(),
+                    "Started: <info>%s</info>",
                     $command
                 )
             );
