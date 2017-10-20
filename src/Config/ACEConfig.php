@@ -6,7 +6,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class ACEConfig
 {
-    const COMMAND_CHUNKS_KEY = 'command-chunks';
+    const COMMAND_GROUPS_KEY = 'command-groups';
     const HIGHLIGHT_KEYWORDS_KEY = 'highlight-keywords';
 
     /**
@@ -31,24 +31,24 @@ class ACEConfig
         $this->configFilePath = $configFilePath;
     }
 
-    public function onEachProcess($key, $chunkName, \Closure $closure)
+    public function onEachProcess($key, $groupName, \Closure $closure)
     {
-        foreach ($this->config[$key][self::COMMAND_CHUNKS_KEY][$chunkName] as $command) {
+        foreach ($this->config[$key][self::COMMAND_GROUPS_KEY][$groupName] as $command) {
             $closure($command);
         }
     }
 
-    public function onEachChunk($key, \Closure $closure)
+    public function onEachGroup($key, \Closure $closure)
     {
-        foreach ($this->config[$key][self::COMMAND_CHUNKS_KEY] as $chunkName => $commandChunk) {
-            $closure($commandChunk, $chunkName);
+        foreach ($this->config[$key][self::COMMAND_GROUPS_KEY] as $groupName => $commands) {
+            $closure($commands, $groupName);
         }
     }
 
     public function onEachKey(\Closure $closure)
     {
-        foreach($this->config as $key => $chunks) {
-            $closure($chunks, $key);
+        foreach($this->config as $key => $groups) {
+            $closure($groups, $key);
         }
     }
 

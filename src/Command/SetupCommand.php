@@ -5,7 +5,7 @@ namespace DalaiLomo\ACE\Command;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Setup\Menu\InteractiveMenu;
 use DalaiLomo\ACE\Setup\Section\EditConfigurationFileSection;
-use DalaiLomo\ACE\Setup\Section\ListCommandChunksSection;
+use DalaiLomo\ACE\Setup\Section\ListCommandGroupsSection;
 use DalaiLomo\ACE\Setup\Section\LogViewerSection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +29,7 @@ class SetupCommand extends Command
             new ACEConfig(ACE_ROOT_DIR . 'config.yml')
         );
 
-        $interactiveMenu->registerSection(new ListCommandChunksSection());
+        $interactiveMenu->registerSection(new ListCommandGroupsSection());
         $interactiveMenu->registerSection(new EditConfigurationFileSection());
         $interactiveMenu->registerSection(new LogViewerSection());
 

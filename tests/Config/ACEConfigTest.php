@@ -35,54 +35,54 @@ class ACEConfigTest extends TestCase
     {
         $actualKeys = [];
 
-        $this->config->onEachKey(function($chunks, $key) use (&$actualKeys) {
+        $this->config->onEachKey(function($groups, $key) use (&$actualKeys) {
             $actualKeys[] = $key;
-            $this->assertTrue(is_array($chunks));
+            $this->assertTrue(is_array($groups));
         });
 
         $this->assertEquals(['fooKey', 'barKey'], $actualKeys);
     }
 
-    public function onEachChunkProvider()
+    public function onEachGroupProvider()
     {
         return [
-            ['fooKey', ['fooChunk']],
-            ['barKey', ['bazChunk', 'booChunk']],
+            ['fooKey', ['fooGroup']],
+            ['barKey', ['bazGroup', 'booGroup']],
         ];
     }
 
     /**
-     * @dataProvider onEachChunkProvider
+     * @dataProvider onEachGroupProvider
      */
-    public function testShouldIterateThroughCommandChunksByGivenKey($key, $expectedChunkNames)
+    public function testShouldIterateThroughCommandGroupsByGivenKey($key, $expectedGroupNames)
     {
-        $actualChunkNames = [];
+        $actualGroupNames = [];
 
-        $this->config->onEachChunk($key, function($commandChunk, $chunkName) use (&$actualChunkNames) {
-            $actualChunkNames[] = $chunkName;
-            $this->assertTrue(is_array($commandChunk));
+        $this->config->onEachGroup($key, function($commands, $groupName) use (&$actualGroupNames) {
+            $actualGroupNames[] = $groupName;
+            $this->assertTrue(is_array($commands));
         });
 
-        $this->assertEquals($expectedChunkNames, $actualChunkNames);
+        $this->assertEquals($expectedGroupNames, $actualGroupNames);
     }
 
     public function onEachProcessProvider()
     {
         return [
-            ['fooKey', 'fooChunk', ['echo "a"', 'echo "b"', 'idontexist', 'echo "c"']],
-            ['barKey', 'bazChunk', ['echo "hello"', 'echo "world"', 'echo "on fire"']],
-            ['barKey', 'booChunk', ['echo "fantasmikos"', 'echo "in the night"', 'echo "oscura"']],
+            ['fooKey', 'fooGroup', ['echo "a"', 'echo "b"', 'idontexist', 'echo "c"']],
+            ['barKey', 'bazGroup', ['echo "hello"', 'echo "world"', 'echo "on fire"']],
+            ['barKey', 'booGroup', ['echo "fantasmikos"', 'echo "in the night"', 'echo "oscura"']],
         ];
     }
 
     /**
      * @dataProvider onEachProcessProvider
      */
-    public function testShouldIterateThroughProcessesByGivenKeyAndChunkName($key, $chunkName, $expectedProcesses)
+    public function testShouldIterateThroughProcessesByGivenKeyAndGroupName($key, $groupName, $expectedProcesses)
     {
         $actualProcesses = [];
 
-        $this->config->onEachProcess($key, $chunkName, function($command) use (&$actualProcesses) {
+        $this->config->onEachProcess($key, $groupName, function($command) use (&$actualProcesses) {
             $actualProcesses[] = $command;
         });
 

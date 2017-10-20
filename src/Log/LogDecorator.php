@@ -47,9 +47,9 @@ class LogDecorator
 
     private function processLog($logFile)
     {
-        $this->onEachCommand(function($key, $chunkName, $commandName, $chunkStreams) use ($logFile) {
+        $this->onEachCommand(function($key, $groupName, $commandName, $commandStreams) use ($logFile) {
             $this->logName = $this->buildLogName($logFile, $this->parsedLog);
-            $this->streamsOutput .= $this->buildOutputFromStreams($chunkName, $commandName, $chunkStreams);
+            $this->streamsOutput .= $this->buildOutputFromStreams($groupName, $commandName, $commandStreams);
             $this->logName .= $this->highlightIfKeywordsAreFoundOnStreamsOutput($key);
         });
     }
@@ -65,18 +65,18 @@ class LogDecorator
         return $output;
     }
 
-    private function buildOutputFromStreams($chunkName, $commandName, $chunkStreams)
+    private function buildOutputFromStreams($groupName, $commandName, $commandStreams)
     {
         $output = CommandOutputHelper::oldSchoolSeparator();
-        $output .= $chunkName . ' : ' . $commandName . ' >> STDOUT'.PHP_EOL;
+        $output .= $groupName . ' : ' . $commandName . ' >> STDOUT'.PHP_EOL;
         $output .= CommandOutputHelper::oldSchoolSeparator();
-        $output .= isset($chunkStreams['stdout']) ? $chunkStreams['stdout'] : '';
+        $output .= isset($commandStreams['stdout']) ? $commandStreams['stdout'] : '';
         $output .= CommandOutputHelper::ninjaSeparator();
 
         $output .= CommandOutputHelper::oldSchoolSeparator();
-        $output .= $chunkName . ' : ' . $commandName . ' >> STDERR'.PHP_EOL;
+        $output .= $groupName . ' : ' . $commandName . ' >> STDERR'.PHP_EOL;
         $output .= CommandOutputHelper::oldSchoolSeparator();
-        $output .= isset($chunkStreams['stderr']) ? $chunkStreams['stderr'] : '';
+        $output .= isset($commandStreams['stderr']) ? $commandStreams['stderr'] : '';
         $output .= CommandOutputHelper::ninjaSeparator();
 
         return $output;
@@ -85,11 +85,11 @@ class LogDecorator
     private function onEachCommand(\Closure $closure)
     {
         // ryu would be proud
-        foreach ($this->parsedLog as $key => $keyChunks) {
-            foreach ($keyChunks as $chunkName => $chunk) {
-                foreach ($chunk as $command) {
-                    foreach ($command as $commandName => $chunkStreams) {
-                        $closure($key, $chunkName, $commandName, $chunkStreams);
+        foreach ($this->parsedLog as $key => $groups) {
+            foreach ($groups as $groupName => $commands) {
+                foreach ($commands as $command) {
+                    foreach ($command as $commandName => $commandStreams) {
+                        $closure($key, $groupName, $commandName, $commandStreams);
                     }
                 }
             }

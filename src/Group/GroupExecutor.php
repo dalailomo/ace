@@ -1,16 +1,16 @@
 <?php
 
-namespace DalaiLomo\ACE\Chunk;
+namespace DalaiLomo\ACE\Group;
 
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
-use DalaiLomo\ACE\Process\ProcessChunk;
+use DalaiLomo\ACE\Process\ProcessGroup;
 use React\ChildProcess\Process;
 use React\EventLoop\Factory as EventFactory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ChunkExecutor
+class GroupExecutor
 {
     /**
      * @var ACEConfig
@@ -50,12 +50,12 @@ class ChunkExecutor
         $this->output = $output;
     }
 
-    public function executeChunks()
+    public function executeProcessGroups()
     {
         $startTime = microtime(true);
 
-        $this->config->onEachChunk($this->key, function($commandChunk, $chunkName) {
-            $this->createAndRunProcessChunk($chunkName);
+        $this->config->onEachGroup($this->key, function($commandGroup, $groupName) {
+            $this->createAndRunProcessGroup($groupName);
         });
 
         $endTime = microtime(true);
@@ -73,14 +73,14 @@ class ChunkExecutor
         return $this->commandsOutput;
     }
 
-    private function createAndRunProcessChunk($chunkName)
+    private function createAndRunProcessGroup($groupName)
     {
         $this->output->writeln(CommandOutputHelper::ninjaSeparator());
-        $this->output->writeln(sprintf("Starting chunk <info>%s</info>", $chunkName));
+        $this->output->writeln(sprintf("Starting process group <info>%s</info>", $groupName));
 
-        $processChunk = new ProcessChunk(EventFactory::create(), $this->input, $this->output);
+        $processGroup = new ProcessGroup(EventFactory::create(), $this->input, $this->output);
 
-        $this->config->onEachProcess($this->key, $chunkName, function($command) use($processChunk) {
+        $this->config->onEachProcess($this->key, $groupName, function($command) use($processGroup) {
             $process = new Process($command);
 
             $this->output->writeln(
@@ -90,11 +90,11 @@ class ChunkExecutor
                 )
             );
 
-            $processChunk->add($process);
+            $processGroup->add($process);
         });
 
-        $processChunk->runLoop();
+        $processGroup->runLoop();
 
-        $this->commandsOutput[$chunkName] = $processChunk->getCommandsOutput();
+        $this->commandsOutput[$groupName] = $processGroup->getCommandsOutput();
     }
 }

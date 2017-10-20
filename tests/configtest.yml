@@ -1,18 +1,18 @@
 fooKey:
-    command-chunks:
-        fooChunk:
+    command-groups:
+        fooGroup:
             - 'echo "a"'
             - 'echo "b"'
             - 'idontexist'
             - 'echo "c"'
 
 barKey:
-    command-chunks:
-        bazChunk:
+    command-groups:
+        bazGroup:
             - 'echo "hello"'
             - 'echo "world"'
             - 'echo "on fire"'
-        booChunk:
+        booGroup:
             - 'echo "fantasmikos"'
             - 'echo "in the night"'
             - 'echo "oscura"'

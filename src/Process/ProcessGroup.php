@@ -9,7 +9,7 @@ use React\Stream\Stream;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProcessChunk
+class ProcessGroup
 {
     /**
      * @var LoopInterface

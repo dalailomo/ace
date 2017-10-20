@@ -2,7 +2,7 @@
 
 namespace DalaiLomo\ACE\Command;
 
-use DalaiLomo\ACE\Chunk\ChunkExecutor;
+use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use Symfony\Component\Console\Command\Command;
@@ -13,9 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExecuteCommand extends Command
 {
     /**
-     * @var ChunkExecutor
+     * @var GroupExecutor
      */
-    private $chunkExecutor;
+    private $groupExecutor;
 
     protected function configure()
     {
@@ -24,7 +24,7 @@ class ExecuteCommand extends Command
             ->setDescription('Executes commands asynchronously, weeeee!');
 
         $this->addOption('diagnosis', 'd', InputOption::VALUE_NONE, 'Show process diagnosis output while running.');
-        $this->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Key of chunks to execute.');
+        $this->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Key for groups to execute.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -32,11 +32,11 @@ class ExecuteCommand extends Command
         $key = $input->getOption('key');
         $config = new ACEConfig(ACE_ROOT_DIR . 'config.yml');
 
-        $this->chunkExecutor = new ChunkExecutor($config, $key, $input, $output);
-        $this->chunkExecutor->executeChunks();
+        $this->groupExecutor = new GroupExecutor($config, $key, $input, $output);
+        $this->groupExecutor->executeProcessGroups();
 
         $output->writeln(CommandOutputHelper::ninjaSeparator());
-        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", $this->chunkExecutor->getTimeSpent()));
+        $output->writeln(sprintf("Time spent: <info>%s seconds</info>", $this->groupExecutor->getTimeSpent()));
 
         $output->writeln('Log file: ' . $this->logToFile($key));
         $output->writeln(CommandOutputHelper::ninjaSeparator());
@@ -47,7 +47,7 @@ class ExecuteCommand extends Command
     private function logToFile($key)
     {
         $file = new \SplFileObject(ACE_ROOT_DIR . 'var/log/' . time() . '.log.json', 'w');
-        $file->fwrite(json_encode([$key => $this->chunkExecutor->getCommandsOutput()]));
+        $file->fwrite(json_encode([$key => $this->groupExecutor->getCommandsOutput()]));
         return $file->getRealPath();
     }
 }
