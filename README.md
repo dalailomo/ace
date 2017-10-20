@@ -6,11 +6,11 @@ Async Command Executor using ReactPHP because... yes
 ### Configuration
 The only thing that needs to be done is to create a `config.yml` file in the same working directory of the `ace` executable.
 
-This file defines several chunks of commands. The chunks will be iterated sequentially, but the commands inside of a chunk will be executed asynchronously. All the chunks can be grouped as well by keys so you can always choose which key you want to execute.
+This file defines several groups of commands. The groups will be iterated sequentially, but the commands inside of a group will be executed asynchronously. All the groups can be grouped as well by keys so you can always choose which key you want to execute.
 
 ```yaml
 yourkey:
-    command-chunks:
+    command-groups:
         sleeps:
             - 'sleep 3'
             - 'sleep 5'
@@ -30,7 +30,7 @@ yourkey:
 
 ### Running
 
-To execute the chunks, just run:
+To execute the groups, just run:
 
 ```bash
 $ ./ace ace:execute -k yourkey
@@ -60,11 +60,11 @@ $ ./ace ace:setup
 
 #### High CPU usage if you are greedy
 
-At the moment, there is no control over the resources used by the commands you put on a chunk, so be careful and try not to put too many commands on a chunk. The CPU usage can go nuts and there is a remote possibility that you can create a high enough energy event pushing a tiny region of the universe from the false vacuum into the true bacon, creating a bubble that will expand in all directions at the speed of light. 
+At the moment, there is no control over the resources used by the commands you put on a group, so be careful and try not to put too many commands on a group. The CPU usage can go nuts and there is a remote possibility that you can create a high enough energy event pushing a tiny region of the universe from the false vacuum into the true bacon, creating a bubble that will expand in all directions at the speed of light. 
 
 ## Pro tip
 
-You can create an alias to execute the chunks and setup.
+You can create an alias to execute the groups and setup.
 
 ```bash
 $ alias acex="path/to/ace ace:execute"
