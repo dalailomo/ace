@@ -47,8 +47,9 @@ class LogDecorator
 
     private function processLog($logFile)
     {
-        $this->onEachCommand(function($key, $groupName, $commandName, $commandStreams) use ($logFile) {
-            $this->logName = $this->buildLogName($logFile, $this->parsedLog);
+        $this->logName = $this->buildLogName($logFile, $this->parsedLog);
+
+        $this->onEachCommand(function($key, $groupName, $commandName, $commandStreams) {
             $this->streamsOutput .= $this->buildOutputFromStreams($groupName, $commandName, $commandStreams);
             $this->logName .= $this->highlightIfKeywordsAreFoundOnStreamsOutput($key);
         });
