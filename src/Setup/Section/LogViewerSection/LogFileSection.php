@@ -28,7 +28,8 @@ class LogFileSection extends AbstractSection
 
     public function doAction()
     {
-        $process = new Process(sprintf('echo "%s" | less', $this->logDecorator->getStreamsOutput()));
+        file_put_contents('/tmp/ace_log_output', $this->logDecorator->getStreamsOutput());
+        $process = new Process('less /tmp/ace_log_output');
 
         try {
             $process->setTty(true);
