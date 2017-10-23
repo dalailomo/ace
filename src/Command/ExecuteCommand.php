@@ -5,6 +5,7 @@ namespace DalaiLomo\ACE\Command;
 use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
+use DalaiLomo\ACE\Helper\FileResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,12 +26,14 @@ class ExecuteCommand extends Command
 
         $this->addOption('diagnosis', 'd', InputOption::VALUE_NONE, 'Show process diagnosis output while running.');
         $this->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Key for groups to execute.');
+        $this->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Config file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $key = $input->getOption('key');
-        $config = new ACEConfig(ACE_ROOT_DIR . 'config.yml');
+        $fileResolver = new FileResolver($input->getOption('config') ? $input->getOption('config') : ACE_ROOT_DIR . 'config.yml');
+        $config = new ACEConfig($fileResolver->getFilePath());
 
         $this->groupExecutor = new GroupExecutor($config, $key, $input, $output);
         $this->groupExecutor->executeProcessGroups();
