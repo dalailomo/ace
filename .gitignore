@@ -2,3 +2,5 @@ vendor/
 config.yml
 var/log/*
 !var/log/.gitkeep
+bin/*
+!bin/.gitkeep
