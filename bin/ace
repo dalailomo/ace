@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-const ACE_ROOT_DIR = __DIR__ . '/';
+const ACE_ROOT_DIR = __DIR__ . '/../';
 
 use DalaiLomo\ACE\Command\ExecuteCommand;
 use DalaiLomo\ACE\Command\SetupCommand;

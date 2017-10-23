@@ -4,3 +4,4 @@ var/log/*
 !var/log/.gitkeep
 bin/*
 !bin/.gitkeep
+!bin/ace
