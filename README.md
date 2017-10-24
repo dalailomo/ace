@@ -1,15 +1,34 @@
 # ACE
 Async Command Executor using ReactPHP because... yes
 
-## How the **** I use this
+## Installation
+
+Download the [latest release](https://github.com/dalailomo/ace/releases/download/1.0.0/ace.phar).
+
+Copy the executable to your bin folder (make sure it has the proper execution permissions):
+
+```bash
+$ mv ~/Downloads/ace.phar /usr/local/bin/ace
+```
+
+## Example of usage
 
 ### Configuration
-The only thing that needs to be done is to create a `config.yml` file in the same working directory of the `ace` executable.
+
+To start configuring ACE, you will need to execute the setup command:
+
+```bash
+$ ace setup
+```
+
+Choose the option number 2, "Edit configuration file". This will open a vim editor to the config file (you can edit it manually as well in `~/.ace/config.yml`).
 
 This file defines several groups of commands. The groups will be iterated sequentially, but the commands inside of a group will be executed asynchronously. All the groups can be grouped as well by keys so you can always choose which key you want to execute.
 
+To start, we can paste the contents below to the config file:
+
 ```yaml
-yourkey:
+sleepers:
     command-groups:
         sleeps:
             - 'sleep 3'
@@ -28,45 +47,24 @@ yourkey:
         - 'on each command'
 ```
 
+Save the contents of the file and close vim. Then you can choose the option number 0 "Quit" to exit the setup.
+
 ### Running
 
-To execute the groups, just run:
+To execute the groups, just run by the desired key, in this case will be `sleepers`:
 
 ```bash
-$ ./ace ace:execute -k yourkey
+$ ./ace execute -k sleepers
 ```
 
-If you want to see the diagnosis output while running, add the `--diagnosis` option (or `-d`). 
+If you want to see the diagnosis output (aka `STDERR` stream output) while running, add the `--diagnosis` option (or `-d`). 
 
 > The diagnosis output will be interleaved with other diagnosis outputs from other commands. Anyway, the diagnosis output for each command will be logged in a separate file.
 
-```bash
-$ ./ace ace:execute -d -k yourkey
-```
+A log file for each run will be created on `~/.ace/log/` in json format. 
 
-Diagnosis will output the contents streamed to STDERR by the commands executed.
-
-A log file for each run will be created on `<ace root dir>/var/log` (on this project, not the absolute `/var/log`) in json format. 
-
-### Interactive setup
-
-To execute the interactive setup, just run:
-
-```bash
-$ ./ace ace:setup
-```
-
-## Known issues & annoyances
+### Known issues & annoyances
 
 #### High CPU usage if you are greedy
 
 At the moment, there is no control over the resources used by the commands you put on a group, so be careful and try not to put too many commands on a group. The CPU usage can go nuts and there is a remote possibility that you can create a high enough energy event pushing a tiny region of the universe from the false vacuum into the true bacon, creating a bubble that will expand in all directions at the speed of light. 
-
-## Pro tip
-
-You can create an alias to execute the groups and setup.
-
-```bash
-$ alias acex="path/to/ace ace:execute"
-$ alias aces="path/to/ace ace:setup"
-```
