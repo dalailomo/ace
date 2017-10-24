@@ -97,15 +97,4 @@ class GroupExecutor
 
         $this->commandsOutput[$groupName] = $processGroup->getCommandsOutput();
     }
-
-    private function shouldExecuteGroup($groupName)
-    {
-        $inputGroups = $this->input->getArgument('groups');
-
-        if (empty($inputGroups)) {
-            return true;
-        }
-
-        return in_array($groupName, $inputGroups);
-    }
 }

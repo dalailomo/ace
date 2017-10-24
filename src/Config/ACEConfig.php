@@ -59,15 +59,6 @@ class ACEConfig
         }
     }
 
-    public function getGroup($key, $groupName)
-    {
-        $this->throwExceptionOnInvalidKey($key);
-
-        return isset($this->config[$key][self::COMMAND_GROUPS_KEY][$groupName])
-            ? $this->config[$key][self::COMMAND_GROUPS_KEY][$groupName]
-            : null;
-    }
-
     public function onEachKey(\Closure $closure)
     {
         foreach($this->config as $key => $groups) {
