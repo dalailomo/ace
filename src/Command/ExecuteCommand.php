@@ -6,7 +6,6 @@ use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Helper\FileHandler;
-use DalaiLomo\ACE\Helper\Init;
 use DalaiLomo\ACE\Log\LogScanner;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,7 +49,7 @@ class ExecuteCommand extends Command
 
     private function logToFile($key)
     {
-        $file = new \SplFileObject(sprintf('%s/%s.%s.%s', ACE_FILES_LOG_DIR, time(), $key, LogScanner::LOG_EXTENSION), 'w');
+        $file = new \SplFileObject(sprintf('%s/%s.%s%s', ACE_FILES_LOG_DIR, time(), $key, LogScanner::LOG_EXTENSION), 'w');
         $file->fwrite(json_encode([$key => $this->groupExecutor->getCommandsOutput()]));
         return $file->getRealPath();
     }
