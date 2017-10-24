@@ -5,7 +5,9 @@ namespace DalaiLomo\ACE\Command;
 use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
-use DalaiLomo\ACE\Helper\FileResolver;
+use DalaiLomo\ACE\Helper\FileHandler;
+use DalaiLomo\ACE\Helper\Init;
+use DalaiLomo\ACE\Log\LogScanner;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -21,19 +23,18 @@ class ExecuteCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('ace:execute')
+            ->setName('execute')
             ->setDescription('Executes commands asynchronously, weeeee!');
 
         $this->addOption('diagnosis', 'd', InputOption::VALUE_NONE, 'Show process diagnosis output while running.');
         $this->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Key for groups to execute.');
-        $this->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Config file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $key = $input->getOption('key');
-        $fileResolver = new FileResolver($input->getOption('config') ? $input->getOption('config') : ACE_ROOT_DIR . 'config.yml');
-        $config = new ACEConfig($fileResolver->getFilePath());
+        $fileResolver = new FileHandler(ACE_CONFIG_FILE);
+        $config = new ACEConfig($fileResolver->getAbsolutePath());
 
         $this->groupExecutor = new GroupExecutor($config, $key, $input, $output);
         $this->groupExecutor->executeProcessGroups();
@@ -49,7 +50,7 @@ class ExecuteCommand extends Command
 
     private function logToFile($key)
     {
-        $file = new \SplFileObject(ACE_ROOT_DIR . 'var/log/' . time() . '.log.json', 'w');
+        $file = new \SplFileObject(sprintf('%s/%s.%s.%s', ACE_FILES_LOG_DIR, time(), $key, LogScanner::LOG_EXTENSION), 'w');
         $file->fwrite(json_encode([$key => $this->groupExecutor->getCommandsOutput()]));
         return $file->getRealPath();
     }

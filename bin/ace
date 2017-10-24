@@ -1,13 +1,24 @@
 #!/usr/bin/env php
 <?php
 
-const ACE_ROOT_DIR = __DIR__ . '/../';
-
 use DalaiLomo\ACE\Command\ExecuteCommand;
 use DalaiLomo\ACE\Command\SetupCommand;
+use DalaiLomo\ACE\Helper\FileHandler;
 use Symfony\Component\Console\Application;
 
+define('ACE_ROOT_DIR', __DIR__ . '/../');
+define('ACE_FILES_DIR', $_SERVER['HOME'] . '/.ace/');
+define('ACE_FILES_LOG_DIR', ACE_FILES_DIR . 'log/');
+define('ACE_CONFIG_FILE', ACE_FILES_DIR . 'config.yml');
+
 require ACE_ROOT_DIR . 'vendor/autoload.php';
+
+$aceFilesDir = new FileHandler(ACE_FILES_DIR);
+$aceFilesDir->createDirectoryIfNotExists();
+$aceConfigFile = new FileHandler(ACE_CONFIG_FILE);
+$aceConfigFile->createFileIfNotExists('');
+$logDir = new FileHandler(ACE_FILES_LOG_DIR);
+$logDir->createDirectoryIfNotExists();
 
 $console = new Application();
 

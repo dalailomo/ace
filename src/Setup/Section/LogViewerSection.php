@@ -10,8 +10,6 @@ use DalaiLomo\ACE\Setup\Section\LogViewerSection\LogFileSection;
 
 class LogViewerSection extends AbstractSection
 {
-    const LOG_FILES_DIR = ACE_ROOT_DIR . 'var/log/';
-
     public function getSectionName()
     {
         return 'Logs';
@@ -19,7 +17,7 @@ class LogViewerSection extends AbstractSection
 
     public function doAction()
     {
-        $logScanner = new LogScanner(self::LOG_FILES_DIR);
+        $logScanner = new LogScanner(ACE_FILES_LOG_DIR);
 
         $interactiveMenu = new InteractiveMenu($this->input, $this->output, $this->question, $this->config);
         $interactiveMenu->setOptionQuitText('Back to main menu');

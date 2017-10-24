@@ -10,6 +10,8 @@ use Symfony\Component\Process\Process;
 
 class LogFileSection extends AbstractSection
 {
+    const TMP_FILE = '/tmp/ace_log_output';
+
     /**
      * @var LogDecorator
      */
@@ -28,8 +30,8 @@ class LogFileSection extends AbstractSection
 
     public function doAction()
     {
-        file_put_contents('/tmp/ace_log_output', $this->logDecorator->getStreamsOutput());
-        $process = new Process('less /tmp/ace_log_output');
+        file_put_contents(self::TMP_FILE, $this->logDecorator->getStreamsOutput());
+        $process = new Process('less ' . self::TMP_FILE);
 
         try {
             $process->setTty(true);
