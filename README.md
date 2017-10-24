@@ -39,6 +39,10 @@ sleepers:
             - 'sleep 6'
             - 'sleep 2'
             - 'sleep 4'
+        even_more_sleeps:
+            - 'sleep 2'
+            - 'sleep 8'
+            - 'sleep 1'
     highlight-keywords:
         - 'words'
         - 'to be'
@@ -51,10 +55,22 @@ Save the contents of the file and close vim. Then you can choose the option numb
 
 ### Running
 
-To execute the groups, just run by the desired key, in this case will be `sleepers`:
+To execute the groups in the order coming from the config file, just run by the desired key, in this case will be `sleepers`:
 
 ```bash
 $ ./ace execute -k sleepers
+```
+
+You can filter by groups just adding them after the key name:
+
+```bash
+$ ./ace execute -k sleepers even_more_sleeps more_sleeps
+```
+
+Note that the groups will be executed in order. You can even repeat a group if you want to execute it twice (or more):
+
+```bash
+$ ./ace execute -k sleepers sleeps more_sleeps sleeps
 ```
 
 If you want to see the diagnosis output (aka `STDERR` stream output) while running, add the `--diagnosis` option (or `-d`). 

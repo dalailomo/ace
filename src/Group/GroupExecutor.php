@@ -56,7 +56,7 @@ class GroupExecutor
 
         $this->config->onEachGroup($this->key, function($commandGroup, $groupName) {
             $this->createAndRunProcessGroup($groupName);
-        });
+        }, $this->input->getArgument('groups'));
 
         $endTime = microtime(true);
 
@@ -96,5 +96,16 @@ class GroupExecutor
         $processGroup->runLoop();
 
         $this->commandsOutput[$groupName] = $processGroup->getCommandsOutput();
+    }
+
+    private function shouldExecuteGroup($groupName)
+    {
+        $inputGroups = $this->input->getArgument('groups');
+
+        if (empty($inputGroups)) {
+            return true;
+        }
+
+        return in_array($groupName, $inputGroups);
     }
 }

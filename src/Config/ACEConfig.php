@@ -33,16 +33,39 @@ class ACEConfig
 
     public function onEachProcess($key, $groupName, \Closure $closure)
     {
+        $this->throwExceptionOnInvalidKey($key);
+
         foreach ($this->config[$key][self::COMMAND_GROUPS_KEY][$groupName] as $command) {
             $closure($command);
         }
     }
 
-    public function onEachGroup($key, \Closure $closure)
+    public function onEachGroup($key, \Closure $closure, $onDemandGroups = [])
     {
-        foreach ($this->config[$key][self::COMMAND_GROUPS_KEY] as $groupName => $commands) {
-            $closure($commands, $groupName);
+        $this->throwExceptionOnInvalidKey($key);
+
+        if (empty($onDemandGroups)) {
+            foreach ($this->config[$key][self::COMMAND_GROUPS_KEY] as $groupName => $commands) {
+                $closure($commands, $groupName);
+            }
+
+            return;
         }
+
+        foreach ($onDemandGroups as $onDemandGroup) {
+            if (isset($this->config[$key][self::COMMAND_GROUPS_KEY][$onDemandGroup])) {
+                $closure($this->config[$key][self::COMMAND_GROUPS_KEY][$onDemandGroup], $onDemandGroup);
+            }
+        }
+    }
+
+    public function getGroup($key, $groupName)
+    {
+        $this->throwExceptionOnInvalidKey($key);
+
+        return isset($this->config[$key][self::COMMAND_GROUPS_KEY][$groupName])
+            ? $this->config[$key][self::COMMAND_GROUPS_KEY][$groupName]
+            : null;
     }
 
     public function onEachKey(\Closure $closure)
@@ -62,5 +85,12 @@ class ACEConfig
         return isset($this->config[$key][self::HIGHLIGHT_KEYWORDS_KEY])
             ? $this->config[$key][self::HIGHLIGHT_KEYWORDS_KEY]
             : [];
+    }
+
+    private function throwExceptionOnInvalidKey($key)
+    {
+        if (false === isset($this->config[$key])) {
+            throw new \InvalidArgumentException("Invalid Key");
+        }
     }
 }
