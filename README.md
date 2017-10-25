@@ -3,7 +3,7 @@ Async Command Executor using ReactPHP because... yes
 
 ## Installation
 
-Download the [latest release](https://github.com/dalailomo/ace/releases/download/1.0.0/ace.phar).
+Download the [latest release](https://github.com/dalailomo/ace/releases/download/1.1.0/ace.phar).
 
 Copy the executable to your bin folder (make sure it has the proper execution permissions):
 
