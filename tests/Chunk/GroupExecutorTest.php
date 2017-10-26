@@ -46,9 +46,6 @@ class GroupExecutorTest extends TestCase
                     'echo "b"' => [
                         'stdout' => "b\n"
                     ],
-                    'idontexist' => [
-                        'stderr' => "sh: idontexist: command not found\n"
-                    ],
                     'echo "c"' => [
                         'stdout' => "c\n"
                     ]

@@ -3,7 +3,6 @@ fooKey:
         fooGroup:
             - 'echo "a"'
             - 'echo "b"'
-            - 'idontexist'
             - 'echo "c"'
 
 barKey:

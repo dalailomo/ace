@@ -69,7 +69,7 @@ class ACEConfigTest extends TestCase
     public function onEachProcessProvider()
     {
         return [
-            ['fooKey', 'fooGroup', ['echo "a"', 'echo "b"', 'idontexist', 'echo "c"']],
+            ['fooKey', 'fooGroup', ['echo "a"', 'echo "b"', 'echo "c"']],
             ['barKey', 'bazGroup', ['echo "hello"', 'echo "world"', 'echo "on fire"']],
             ['barKey', 'booGroup', ['echo "fantasmikos"', 'echo "in the night"', 'echo "oscura"']],
         ];
