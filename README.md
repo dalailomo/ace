@@ -3,6 +3,8 @@ Async Command Executor using ReactPHP because... yes
 
 ## Installation
 
+> ACE requires `php >= 7.1`.
+
 Download the [latest release](https://github.com/dalailomo/ace/releases/download/1.1.0/ace.phar).
 
 Copy the executable to your bin folder (make sure it has the proper execution permissions):

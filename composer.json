@@ -3,7 +3,7 @@
     "description": "Async Command Executor ACE",
     "license": "MIT",
     "require": {
-        "php": ">=5.6",
+        "php": ">=7.1",
         "react/child-process": "^0.4.3",
         "symfony/yaml": "^3.2",
         "symfony/console": "^3.2",
