@@ -1,4 +1,7 @@
 # ACE
+
+[![Build Status](https://travis-ci.org/dalailomo/ace.svg?branch=master)](https://travis-ci.org/dalailomo/ace)
+
 Async Command Executor using ReactPHP because... yes
 
 ## Installation
