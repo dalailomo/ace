@@ -10,95 +10,108 @@ use Symfony\Component\Console\Output\Output;
 
 class GroupExecutorTest extends TestCase
 {
-    public function executionsByKeyProvider()
+    public function groupsShouldBeFoundUnderCorrespondingKeyProvider()
     {
         return [
-            'key fooKey' => [
-                'fooKey', [
-                    'fooGroup' => [
-                        0 => [
-                            'echo "a"' => [
-                                'stdout' => "a\n"
-                            ]
-                        ],
-                        1 => [
-                            'echo "b"' => [
-                                'stdout' => "b\n"
-                            ]
-                        ],
-                        2 => [
-                            'idontexist' => [
-                                'stderr' => "sh: idontexist: command not found\n"
-                            ]
-                        ],
-                        3 => [
-                            'echo "c"' => [
-                                'stdout' => "c\n"
-                            ]
-                        ],
+            'Groups found on key foo' => [
+                'fooKey', ['fooGroup']
+            ],
+            'Groups found on key bar' => [
+                'barKey', ['bazGroup', 'booGroup']
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider groupsShouldBeFoundUnderCorrespondingKeyProvider
+     */
+    public function testGroupsShouldBeFoundUnderCorrespondingKey($key, array $expectedGroups)
+    {
+        $groupExecutor = $this->createGroupExecutorInstance($key);
+        $commandsOutput = $groupExecutor->getCommandsOutput();
+
+        foreach ($expectedGroups as $expectedGroup) {
+            $this->assertArrayHasKey($expectedGroup, $commandsOutput);
+        }
+    }
+
+    public function commandOutputsShouldBeFoundUnderCorrespondingGroupProvider()
+    {
+        return [
+            'Commands on fooKey:fooGroup' => [
+                'fooKey', 'fooGroup', [
+                    'echo "a"' => [
+                        'stdout' => "a\n"
+                    ],
+                    'echo "b"' => [
+                        'stdout' => "b\n"
+                    ],
+                    'idontexist' => [
+                        'stderr' => "sh: idontexist: command not found\n"
+                    ],
+                    'echo "c"' => [
+                        'stdout' => "c\n"
                     ]
                 ]
             ],
-            'key barKey' => [
-                'barKey', [
-                    'bazGroup' => [
-                        0 => [
-                            'echo "hello"' => [
-                                'stdout' => "hello\n"
-                            ]
-                        ],
-                        1 => [
-                            'echo "world"' => [
-                                'stdout' => "world\n"
-                            ]
-                        ],
-                        2 => [
-                            'echo "on fire"' => [
-                                'stdout' => "on fire\n"
-                            ]
-                        ],
+            'Commands on barKey:bazGroup' => [
+                'barKey', 'bazGroup', [
+                    'echo "hello"' => [
+                        'stdout' => "hello\n"
                     ],
-                    'booGroup' => [
-                        0 => [
-                            'echo "fantasmikos"' => [
-                                'stdout' => "fantasmikos\n"
-                            ]
-                        ],
-                        1 => [
-                            'echo "in the night"' => [
-                                'stdout' => "in the night\n"
-                            ]
-                        ],
-                        2 => [
-                            'echo "oscura"' => [
-                                'stdout' => "oscura\n"
-                            ]
-                        ],
-                    ]
+                    'echo "world"' => [
+                        'stdout' => "world\n"
+                    ],
+                    'echo "on fire"' => [
+                        'stdout' => "on fire\n"
+                    ],
+                ]
+            ],
+            'Commands on barKey:booGroup' => [
+                'barKey', 'booGroup', [
+                    'echo "fantasmikos"' => [
+                        'stdout' => "fantasmikos\n"
+                    ],
+                    'echo "in the night"' => [
+                        'stdout' => "in the night\n"
+                    ],
+                    'echo "oscura"' => [
+                        'stdout' => "oscura\n"
+                    ],
                 ]
             ],
         ];
     }
 
     /**
-     * @dataProvider executionsByKeyProvider
+     * @dataProvider commandOutputsShouldBeFoundUnderCorrespondingGroupProvider
      */
-    public function testShouldExecuteCorrespondingGroupsByGivenKey($key, $expectedOutput) {
-        $groupExecutor = new GroupExecutor(
+    public function testCommandOutputsShouldBeFoundUnderCorrespondingGroup($key, $group, array $expectedCommandStreamsCollection)
+    {
+        $groupExecutor = $this->createGroupExecutorInstance($key);
+        $commandsOutput = $groupExecutor->getCommandsOutput();
+
+        foreach($commandsOutput[$group] as $pid => $commandStreams) {
+            $this->assertTrue(is_int($pid), 'The pid should be an integer');
+
+            $commandStreamsKey = key($commandStreams);
+            $this->assertTrue(array_key_exists($commandStreamsKey, $expectedCommandStreamsCollection));
+            $this->assertEquals($commandStreams[$commandStreamsKey], $expectedCommandStreamsCollection[$commandStreamsKey]);
+        }
+    }
+
+    private function createGroupExecutorInstance($key)
+    {
+        $ge = new GroupExecutor(
             new ACEConfig(__DIR__ . '/../configtest.yml'),
             $key,
             $this->getMockBuilder(Input::class)->getMock(),
             $this->getMockBuilder(Output::class)->getMock()
         );
 
-        $groupExecutor->executeProcessGroups();
+        $ge->executeProcessGroups();
 
-        // the pids need to be faked as is quite hard to figure out which ones will be on the data provider,
-        // unless you have superpowers. Anyway the implementation for this should be changed as is kinda
-        // like a pain in the arse to test it...
-        $fakedPidsCommandsOutput = $this->fakePids($groupExecutor->getCommandsOutput());
-
-        $this->assertEquals($expectedOutput, $fakedPidsCommandsOutput);
+        return $ge;
     }
 
     private function fakePids(array $commandsOutput)
