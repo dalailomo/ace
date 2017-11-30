@@ -1,15 +1,11 @@
-keynumberone:
-    command-chunks:
-        some-ls:
-            - 'ls /'
-            - 'ls -lha ~/'
-        some-finds:
-            - 'find ~/ -name "a_file"'
-            - 'find / -name "another_file"'
-
-keynumbertwo:
-    command-chunks:
-        some-sleepers:
-            - 'sleep 3'
-            - 'sleep 2'
-            - 'sleep 6'
+finder-examples:
+    highlight-keywords:
+      - 'png'
+    command-groups:
+        find-phars:
+            - 'find -E ~/ -regex ".*\.(phar)"'
+            - 'find -E /usr -regex ".*\.(phar)"'
+        find-images:
+            - 'find -E ~/Desktop -regex ".*\.(jpg|gif|png|jpeg)"'
+            - 'find -E ~/Downloads -regex ".*\.(jpg|gif|png|jpeg)"'
+            - 'find -E ~/Documents -regex ".*\.(jpg|gif|png|jpeg)"'
