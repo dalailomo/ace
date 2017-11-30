@@ -4,7 +4,9 @@ namespace DalaiLomo\ACE\Group;
 
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
+use DalaiLomo\ACE\Helper\OS;
 use DalaiLomo\ACE\Process\ProcessGroup;
+use DalaiLomo\ACE\Process\ProcessMonitoring;
 use React\ChildProcess\Process;
 use React\EventLoop\Factory as EventFactory;
 use Symfony\Component\Console\Input\InputInterface;
@@ -79,6 +81,11 @@ class GroupExecutor
         $this->output->writeln(sprintf("Starting process group <info>%s</info>", $groupName));
 
         $processGroup = new ProcessGroup(EventFactory::create(), $this->input, $this->output);
+        $processMonitoring = OS::getProcessMonitoring($this->output);
+
+        if ($processMonitoring) {
+            $processGroup->addProcessMonitoring($processMonitoring);
+        }
 
         $this->config->onEachProcess($this->key, $groupName, function($command) use($processGroup) {
             $process = new Process($command);
