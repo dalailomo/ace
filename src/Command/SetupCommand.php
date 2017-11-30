@@ -6,6 +6,7 @@ use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\FileHandler;
 use DalaiLomo\ACE\Setup\Menu\InteractiveMenu;
 use DalaiLomo\ACE\Setup\Section\EditConfigurationFileSection;
+use DalaiLomo\ACE\Setup\Section\ExecutorSection;
 use DalaiLomo\ACE\Setup\Section\ListCommandGroupsSection;
 use DalaiLomo\ACE\Setup\Section\LogViewerSection;
 use Symfony\Component\Console\Command\Command;
@@ -29,8 +30,9 @@ class SetupCommand extends Command
         $interactiveMenu = new InteractiveMenu($input, $output, $this->getHelper('question'), $config);
 
         $interactiveMenu->registerSection(new ListCommandGroupsSection());
-        $interactiveMenu->registerSection(new EditConfigurationFileSection());
+        $interactiveMenu->registerSection(new ExecutorSection());
         $interactiveMenu->registerSection(new LogViewerSection());
+        $interactiveMenu->registerSection(new EditConfigurationFileSection());
 
         $interactiveMenu->run();
 
