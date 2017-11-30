@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ProcessGroup
 {
+    const PERIODIC_TIMER_INTERVAL = 0.5;
+
     /**
      * @var LoopInterface
      */
@@ -30,6 +32,12 @@ class ProcessGroup
      * @var array
      */
     private $commandsOutput = [];
+
+    /**
+     * @var ProcessMonitoring
+     */
+    private $processMonitoring;
+
 
     public function __construct(LoopInterface $loop, InputInterface $input, OutputInterface $output)
     {
@@ -59,10 +67,23 @@ class ProcessGroup
         $stderr->on('data', function($streamOutput) use($process) {
             $this->onProcessSTDERR($process, $streamOutput);
         });
+
+        if ($this->processMonitoring) {
+            $this->processMonitoring->add($process);
+        }
+    }
+
+    public function addProcessMonitoring(ProcessMonitoring $processMonitoring)
+    {
+        $this->processMonitoring = $processMonitoring;
     }
 
     public function runLoop()
     {
+        if ($this->processMonitoring) {
+            $this->loop->addPeriodicTimer(self::PERIODIC_TIMER_INTERVAL, $this->processMonitoring->onPeriodicTimerTick());
+        }
+
         $this->loop->run();
     }
 
