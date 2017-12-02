@@ -13,10 +13,37 @@ define('ACE_CONFIG_FILE', ACE_FILES_DIR . 'config.yml');
 
 require ACE_ROOT_DIR . 'vendor/autoload.php';
 
+// Creates main ace folder if not exists
 $aceFilesDir = new FileHandler(ACE_FILES_DIR);
 $aceFilesDir->createDirectoryIfNotExists();
+
+// Creates the default config if not exists
+$defaultConfigFileContent = <<<YML
+finder-examples:
+    highlight-keywords:
+        - 'png'
+    command-groups:
+        find-phars:
+            - 'find -E ~/ -regex ".*\.(phar)"'
+            - 'find -E /usr -regex ".*\.(phar)"'
+        find-images:
+            - 'find -E ~/Desktop -regex ".*\.(jpg|gif|png|jpeg)"'
+            - 'find -E ~/Downloads -regex ".*\.(jpg|gif|png|jpeg)"'
+            - 'find -E ~/Documents -regex ".*\.(jpg|gif|png|jpeg)"'
+more-finder-examples:
+    command-groups:
+        find-zips:
+            - 'find -E ~/Desktop -regex ".*\.(zip)"'
+            - 'find -E ~/Downloads -regex ".*\.(zip)"'
+        find-tarballs:
+            - 'find -E ~/Desktop -regex ".*\.(tar)"'
+            - 'find -E ~/Downloads -regex ".*\.(tar)"'
+YML;
+
 $aceConfigFile = new FileHandler(ACE_CONFIG_FILE);
-$aceConfigFile->createFileIfNotExists('');
+$aceConfigFile->createFileIfNotExists($defaultConfigFileContent);
+
+// Creates log directory if not exists
 $logDir = new FileHandler(ACE_FILES_LOG_DIR);
 $logDir->createDirectoryIfNotExists();
 
