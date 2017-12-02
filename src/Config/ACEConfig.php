@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Config;
 
+use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use Symfony\Component\Yaml\Yaml;
 
 class ACEConfig
@@ -78,10 +79,27 @@ class ACEConfig
             : [];
     }
 
+    public function getSummary()
+    {
+        $output = '';
+
+        $this->onEachKey(function($group, $key) use (&$output) {
+            $output .= "--key {$key}" . PHP_EOL . CommandOutputHelper::oldSchoolSeparator();
+
+            $this->onEachGroup($key, function($commands, $groupName) use(&$output) {
+                $output .= sprintf(
+                    "  %s\n    %s\n\n", $groupName, implode(PHP_EOL . "    ", $commands)
+                );
+            });
+        });
+
+        return $output;
+    }
+
     private function throwExceptionOnInvalidKey($key)
     {
         if (false === isset($this->config[$key])) {
-            throw new \InvalidArgumentException("Invalid Key");
+            throw new InvalidKeyException("Invalid key: '{$key}'");
         }
     }
 }

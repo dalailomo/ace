@@ -17,19 +17,7 @@ class ListCommandGroupsSection extends AbstractSection
 
     public function doAction()
     {
-        $output = '';
-
-        $this->config->onEachKey(function($group, $key) use (&$output) {
-            $output .= $key . PHP_EOL . CommandOutputHelper::oldSchoolSeparator();
-
-            $this->config->onEachGroup($key, function($commands, $groupName) use(&$output) {
-                $output .= sprintf(
-                    "%s\n\t%s\n\n", $groupName, implode(PHP_EOL . "\t", $commands)
-                );
-            });
-        });
-
-        file_put_contents(self::TMP_FILE, $output);
+        file_put_contents(self::TMP_FILE, $this->config->getSummary());
         $process = new Process('less ' . self::TMP_FILE);
 
         try {

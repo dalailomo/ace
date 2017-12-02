@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Command;
 
+use DalaiLomo\ACE\Config\InvalidKeyException;
 use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
@@ -37,8 +38,20 @@ class ExecuteCommand extends Command
         $fileResolver = new FileHandler(ACE_CONFIG_FILE);
         $config = new ACEConfig($fileResolver->getAbsolutePath());
 
-        $this->groupExecutor = new GroupExecutor($config, $key, $input, $output);
-        $this->groupExecutor->executeProcessGroups();
+        if (!$key) {
+            $output->writeln(PHP_EOL . 'You must specify a <fg=green>--key (-k)</>.' . PHP_EOL);
+            $output->writeln($config->getSummary());
+            return -1;
+        }
+
+        try {
+            $this->groupExecutor = new GroupExecutor($config, $key, $input, $output);
+            $this->groupExecutor->executeProcessGroups();
+        } catch (InvalidKeyException $e) {
+            $output->writeln("<error>{$e->getMessage()}</error>");
+            $output->writeln("\nAvailable keys:\n\n" . $config->getSummary());
+            return -1;
+        }
 
         $output->writeln(CommandOutputHelper::ninjaSeparator());
         $output->writeln(sprintf("Time spent: <info>%s seconds</info>", $this->groupExecutor->getTimeSpent()));
