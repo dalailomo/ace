@@ -49,9 +49,10 @@ class LogDecorator
     {
         $this->logName = $this->buildLogName($logFile, $this->parsedLog);
 
-        $this->onEachCommand(function($key, $groupName, $commandName, $commandStreams) {
+        $this->onEachCommand(function($groupName, $commandName, $commandStreams) {
             $this->streamsOutput .= $this->buildOutputFromStreams($groupName, $commandName, $commandStreams);
-            $this->logName .= $this->highlightIfKeywordsAreFoundOnStreamsOutput($key);
+        }, function($key) {
+            $this->logName .= ' ' . $this->highlightIfKeywordsAreFoundOnStreamsOutput($key);
         });
     }
 
@@ -83,31 +84,41 @@ class LogDecorator
         return $output;
     }
 
-    private function onEachCommand(\Closure $closure)
+    private function onEachCommand(\Closure $commandStreamsClosure, \Closure $highlightClosure)
     {
         // ryu would be proud
         foreach ($this->parsedLog as $key => $groups) {
             foreach ($groups as $groupName => $commands) {
                 foreach ($commands as $command) {
                     foreach ($command as $commandName => $commandStreams) {
-                        $closure($key, $groupName, $commandName, $commandStreams);
+                        $commandStreamsClosure($groupName, $commandName, $commandStreams);
                     }
                 }
             }
+            $highlightClosure($key);
         }
     }
 
     private function highlightIfKeywordsAreFoundOnStreamsOutput($key)
     {
         $keywords = $this->config->getKeywordsToHighlight($key);
-        $output = '';
+        $counts = [];
 
         foreach ($keywords as $keyword) {
-            if (strpos(strtolower($this->streamsOutput), strtolower($keyword))) {
-                $output .= ' *' . $keyword;
-            }
+            $counts[$keyword] = substr_count(strtolower($this->streamsOutput), strtolower($keyword));
         }
 
-        return $output;
+        return $this->decorateHighlight($counts);
+    }
+
+    private function decorateHighlight(array $counts)
+    {
+        $result = '[';
+
+        foreach ($counts as $key => $count) {
+            $result .= " {$key}({$count})";
+        }
+
+        return $result . ' ]';
     }
 }
