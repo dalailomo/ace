@@ -5,11 +5,8 @@ namespace DalaiLomo\ACE\Setup\Section\ExecutorSection;
 use DalaiLomo\ACE\Command\ExecuteCommand;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Setup\Section\AbstractSection;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\StreamOutput;
 
 class ExecutorGroupSection extends AbstractSection
 {

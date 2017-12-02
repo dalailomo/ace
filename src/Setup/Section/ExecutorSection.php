@@ -5,13 +5,12 @@ namespace DalaiLomo\ACE\Setup\Section;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Setup\Menu\InteractiveMenu;
 use DalaiLomo\ACE\Setup\Section\ExecutorSection\ExecutorGroupSection;
-use Symfony\Component\Console\Question\Question;
 
 class ExecutorSection extends AbstractSection
 {
     public function getSectionName()
     {
-        return 'Execute group';
+        return 'Execute commands';
     }
 
     public function doAction()
