@@ -2,6 +2,7 @@
 
 namespace DalaiLomo\ACE\Setup\Section;
 
+use DalaiLomo\ACE\Helper\Env;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -14,7 +15,7 @@ class EditConfigurationFileSection extends AbstractSection
 
     public function doAction()
     {
-        $process = new Process('vim ' . $this->config->getConfigFilePath());
+        $process = new Process(Env::getEditor() . ' ' . $this->config->getConfigFilePath());
 
         try {
             $process->setTty(true);
