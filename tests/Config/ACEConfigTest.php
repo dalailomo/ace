@@ -4,6 +4,7 @@ namespace DalaiLomo\ACE\Tests\Config;
 
 use DalaiLomo\ACE\Config\ACEConfig;
 use PHPUnit\Framework\TestCase;
+use RomaricDrigon\MetaYaml\Loader\YamlLoader;
 
 class ACEConfigTest extends TestCase
 {
@@ -21,14 +22,14 @@ class ACEConfigTest extends TestCase
     {
         parent::setUp();
 
-        $this->config = new ACEConfig($this->configFilePathInput);
+        $this->config = new ACEConfig($this->configFilePathInput, new YamlLoader());
     }
 
     public function testShouldThrowExceptionIfConfigFileIsNotValid()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\Exception::class);
 
-        new ACEConfig('wrong/path/to/config.yml');
+        new ACEConfig('wrong/path/to/config.yml', new YamlLoader());
     }
 
     public function testShouldIterateThroughKeys()

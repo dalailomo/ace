@@ -3,7 +3,8 @@
 namespace DalaiLomo\ACE\Config;
 
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
-use Symfony\Component\Yaml\Yaml;
+use RomaricDrigon\MetaYaml\Loader\Loader;
+use RomaricDrigon\MetaYaml\MetaYaml;
 
 class ACEConfig
 {
@@ -20,16 +21,57 @@ class ACEConfig
      */
     private $configFilePath;
 
-    public function __construct($configFilePath)
+    /**
+     * @var string
+     */
+    private $schema = <<<YML
+root:
+    _type: prototype
+    _prototype:
+        _type: array
+        _not_empty: true
+        _children:
+            highlight-keywords:
+                _type: prototype
+                _prototype:
+                    _type: text
+                    _not_empty: true
+            command-groups:
+                _type: prototype
+                _required: true
+                _prototype:
+                    _type: prototype
+                    _prototype:
+                        _type: text
+                        _not_empty: true
+YML;
+
+    /**
+     * @var Loader
+     */
+    private $loader;
+
+    /**
+     * @var MetaYaml
+     */
+    private $metaYaml;
+
+    public function __construct($configFilePath, Loader $loader)
     {
-        if (false === file_exists($configFilePath)) {
-            throw new \InvalidArgumentException('Config file not found');
-        }
-
-        $fileContents = file_get_contents($configFilePath);
-
-        $this->config = Yaml::parse($fileContents);
+        $this->loader = $loader;
+        $this->config = $this->loader->loadFromFile($configFilePath);
         $this->configFilePath = $configFilePath;
+    }
+
+    public function validateConfig()
+    {
+        $this->metaYaml = new MetaYaml($this->loader->load($this->schema), true);
+        $this->metaYaml->validate($this->config);
+    }
+
+    public function reloadConfig()
+    {
+        $this->config = $this->loader->loadFromFile($this->configFilePath);
     }
 
     public function onEachProcess($key, $groupName, \Closure $closure)
@@ -103,3 +145,4 @@ class ACEConfig
         }
     }
 }
+

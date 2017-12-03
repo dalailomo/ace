@@ -5,6 +5,7 @@ namespace DalaiLomo\ACE\Tests\Group;
 use DalaiLomo\ACE\Group\GroupExecutor;
 use DalaiLomo\ACE\Config\ACEConfig;
 use PHPUnit\Framework\TestCase;
+use RomaricDrigon\MetaYaml\Loader\YamlLoader;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Output\Output;
 
@@ -100,7 +101,7 @@ class GroupExecutorTest extends TestCase
     private function createGroupExecutorInstance($key)
     {
         $ge = new GroupExecutor(
-            new ACEConfig(__DIR__ . '/../configtest.yml'),
+            new ACEConfig(__DIR__ . '/../configtest.yml', new YamlLoader()),
             $key,
             $this->getMockBuilder(Input::class)->getMock(),
             $this->getMockBuilder(Output::class)->getMock()

@@ -8,6 +8,8 @@ use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Helper\FileHandler;
 use DalaiLomo\ACE\Log\LogScanner;
+use RomaricDrigon\MetaYaml\Exception\NodeValidatorException;
+use RomaricDrigon\MetaYaml\Loader\YamlLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,7 +38,8 @@ class ExecuteCommand extends Command
     {
         $key = $input->getOption('key');
         $fileResolver = new FileHandler(ACE_CONFIG_FILE);
-        $config = new ACEConfig($fileResolver->getAbsolutePath());
+        $config = new ACEConfig($fileResolver->getAbsolutePath(), new YamlLoader());
+        $config->validateConfig();
 
         if (!$key) {
             $output->writeln(PHP_EOL . 'You must specify a <fg=green>--key (-k)</>.' . PHP_EOL);

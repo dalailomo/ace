@@ -9,6 +9,7 @@ use DalaiLomo\ACE\Setup\Section\EditConfigurationFileSection;
 use DalaiLomo\ACE\Setup\Section\ExecutorSection;
 use DalaiLomo\ACE\Setup\Section\ListCommandGroupsSection;
 use DalaiLomo\ACE\Setup\Section\LogViewerSection;
+use RomaricDrigon\MetaYaml\Loader\YamlLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,7 +26,7 @@ class SetupCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileResolver = new FileHandler(ACE_CONFIG_FILE);
-        $config = new ACEConfig($fileResolver->getAbsolutePath());
+        $config = new ACEConfig($fileResolver->getAbsolutePath(), new YamlLoader());
 
         $interactiveMenu = new InteractiveMenu($input, $output, $this->getHelper('question'), $config);
 

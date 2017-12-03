@@ -86,6 +86,8 @@ class InteractiveMenu
                 break;
             }
 
+            $this->aceConfig->reloadConfig();
+
             $this->output->write(CommandOutputHelper::clearOutput());
             $this->output->writeln($this->getSectionFromChoice($choice)->doAction());
         } while (true);
