@@ -3,6 +3,7 @@
 namespace DalaiLomo\ACE\Setup\Section\LogViewerSection;
 
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
+use DalaiLomo\ACE\Helper\Env;
 use DalaiLomo\ACE\Log\LogDecorator;
 use DalaiLomo\ACE\Setup\Section\AbstractSection;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -31,7 +32,7 @@ class LogFileSection extends AbstractSection
     public function doAction()
     {
         file_put_contents(self::TMP_FILE, $this->logDecorator->getStreamsOutput());
-        $process = new Process('less ' . self::TMP_FILE);
+        $process = new Process(Env::getPager() . ' ' . self::TMP_FILE);
 
         try {
             $process->setTty(true);

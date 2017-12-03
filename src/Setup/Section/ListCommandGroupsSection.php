@@ -4,6 +4,7 @@ namespace DalaiLomo\ACE\Setup\Section;
 
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use RomaricDrigon\MetaYaml\Exception\NodeValidatorException;
+use DalaiLomo\ACE\Helper\Env;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -31,7 +32,7 @@ class ListCommandGroupsSection extends AbstractSection
         }
 
         file_put_contents(self::TMP_FILE, $this->config->getSummary());
-        $process = new Process('less ' . self::TMP_FILE);
+        $process = new Process(Env::getPager() . ' ' . self::TMP_FILE);
 
         try {
             $process->setTty(true);
