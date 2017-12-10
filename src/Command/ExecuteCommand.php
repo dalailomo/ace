@@ -8,7 +8,7 @@ use DalaiLomo\ACE\Config\ACEConfig;
 use DalaiLomo\ACE\Helper\CommandOutputHelper;
 use DalaiLomo\ACE\Helper\FileHandler;
 use DalaiLomo\ACE\Log\LogScanner;
-use RomaricDrigon\MetaYaml\Exception\NodeValidatorException;
+use DalaiLomo\ACE\Log\LogWriter;
 use RomaricDrigon\MetaYaml\Loader\YamlLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -59,16 +59,12 @@ class ExecuteCommand extends Command
         $output->writeln(CommandOutputHelper::ninjaSeparator());
         $output->writeln(sprintf("Time spent: <info>%s seconds</info>", $this->groupExecutor->getTimeSpent()));
 
-        $output->writeln('Log file: ' . $this->logToFile($key));
+        $logWriter = new LogWriter(ACE_FILES_LOG_DIR);
+        $logFilePath = $logWriter->logToFile($this->groupExecutor->getCommandsOutput(), $key);
+
+        $output->writeln('Log file: ' . $logFilePath);
         $output->writeln(CommandOutputHelper::ninjaSeparator());
 
         return 0;
-    }
-
-    private function logToFile($key)
-    {
-        $file = new \SplFileObject(sprintf('%s/%s.%s%s', ACE_FILES_LOG_DIR, time(), $key, LogScanner::LOG_EXTENSION), 'w');
-        $file->fwrite(json_encode([$key => $this->groupExecutor->getCommandsOutput()]));
-        return $file->getRealPath();
     }
 }
