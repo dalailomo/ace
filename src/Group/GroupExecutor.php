@@ -75,6 +75,64 @@ class GroupExecutor
         return $this->commandsOutput;
     }
 
+    private function addProcessGroup($processGroup, $command) {
+        $process = new Process($command);
+
+        $this->output->writeln(
+            sprintf(
+                "Started: <info>%s</info>",
+                $command
+            )
+        );
+
+        $processGroup->add($process);
+    }
+
+    private function hasWildcards($string) {
+        return strpos($string, '*');
+    }
+
+    private function processCommandWithWildcards($processGroup, $command) {
+        $commandParts = explode(' ', $command);
+        $cmd = '';
+        $lines = [];
+        static $i = 0;
+
+        foreach($commandParts as $part) {
+            if (!$this->hasWildcards($part)) {
+                $cmd .= $part . ' ';
+                continue;
+            }
+
+            exec('ls ' . $part, $lines);
+            $cmd .= '__LINESOUT__ ';
+        }
+
+        $this->output->writeln(CommandOutputHelper::ninjaSeparator());
+        $this->output->writeln("<info>A wildcard has been found and these are the matches: </info>");
+        $this->output->writeln(CommandOutputHelper::oldSchoolSeparator());
+        $this->output->writeln(implode(PHP_EOL, $lines));
+        $this->output->write(CommandOutputHelper::ninjaSeparator());
+        $this->output->writeln(CommandOutputHelper::oldSchoolSeparator());
+        $this->output->writeln("<fg=yellow>If you think it's going to be an expensive operation split the process into more groups or you computer may burn like a <fg=red>hellish</> creature.</>");
+        $this->output->write(CommandOutputHelper::ninjaSeparator());
+        $this->output->writeln("Are you sure you want to execute these asynchronously?");
+
+        $result = readline(PHP_EOL . "Y/N: ");
+
+        if (strtolower($result) !== 'y') {
+            $this->output->writeln("<fg=red>Cancelled cowardly</>");
+            return;
+        }
+
+        $this->output->writeln("<info>Executing bravely</info>");
+
+        foreach($lines as $line) {
+            $this->addProcessGroup($processGroup, str_replace('__LINESOUT__', $line, str_replace('$I', $i, $cmd)));
+            $i++;
+        }
+    }
+
     private function createAndRunProcessGroup($groupName)
     {
         $this->output->writeln(CommandOutputHelper::ninjaSeparator());
@@ -88,16 +146,12 @@ class GroupExecutor
         }
 
         $this->config->onEachProcess($this->key, $groupName, function($command) use($processGroup) {
-            $process = new Process($command);
+            if ($this->hasWildcards($command)) {
+                $this->processCommandWithWildcards($processGroup, $command);
+                return;
+            }
 
-            $this->output->writeln(
-                sprintf(
-                    "Started: <info>%s</info>",
-                    $command
-                )
-            );
-
-            $processGroup->add($process);
+            $this->addProcessGroup($processGroup, $command);
         });
 
         $processGroup->runLoop();
